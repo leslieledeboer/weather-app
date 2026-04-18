@@ -13,11 +13,15 @@ interface Daily {
 }
 
 interface OpenMeteoData {
+    readonly timezone: string;
+    readonly timezone_abbreviation: string;
     readonly current: Current;
     readonly daily: Daily;
 }
 
 interface WeatherData {
+    readonly timezoneLong: string;
+    readonly timezoneShort: string;
     readonly temperature: number;
     readonly isDay: boolean;
     readonly sunrise: string;
@@ -27,6 +31,8 @@ interface WeatherData {
 }
 
 const mapData = (input: OpenMeteoData): WeatherData => ({
+    timezoneLong: input.timezone,
+    timezoneShort: input.timezone_abbreviation,
     temperature: input.current.temperature_2m,
     isDay: input.current.is_day === 1,
     sunrise: input.daily.sunrise[0],
@@ -38,6 +44,8 @@ const mapData = (input: OpenMeteoData): WeatherData => ({
 const params = new URLSearchParams({
     latitude: String(32.71742),
     longitude: String(-117.162772),
+    // latitude: String(-32.71742),
+    // longitude: String(62.837228),
     current: "temperature_2m,is_day",
     daily: "sunrise,sunset,sunshine_duration,daylight_duration",
     temperature_unit: "fahrenheit",

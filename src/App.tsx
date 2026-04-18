@@ -1,4 +1,8 @@
-import { useWeather } from "./hooks/useWeather.ts";
+import { Suspense } from "react";
+import { Canvas } from "@react-three/fiber";
+import { Environment } from "@react-three/drei";
+import { useWeather } from "./hooks/useWeather";
+import Scene from "./components/Scene";
 
 export default function App() {
   const { data, loading, error } = useWeather();
@@ -19,12 +23,23 @@ export default function App() {
 
   return (
     <>
-      <p>{data.temperature}</p>
-      <p>{data.isDay}</p>
-      <p>{data.sunrise}</p>
-      <p>{data.sunset}</p>
-      <p>{data.sunshineSeconds}</p>
-      <p>{data.daylightSeconds}</p>
+      <p>Timezone: {data.timezoneLong}</p>
+      <p>Timezone Abbreviation: {data.timezoneShort}</p>
+      <p>Temperature: {data.temperature}</p>
+      <p>Is Day: {data.isDay ? "true" : "false"}</p>
+      <p>Sunrise: {data.sunrise}</p>
+      <p>Sunset: {data.sunset}</p>
+      <p>Seconds of sunshine: {data.sunshineSeconds}</p>
+      <p>Seconds of daylight: {data.daylightSeconds}</p>
+
+      <div className="h-dvh">
+        <Canvas>
+          <Suspense fallback={null}>
+            <Scene isDay={data.isDay} />
+            <Environment preset="studio" />
+          </Suspense>
+        </Canvas>
+      </div>
     </>
   );
 }
