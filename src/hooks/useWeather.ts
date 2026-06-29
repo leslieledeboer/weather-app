@@ -1,94 +1,117 @@
 import { useState, useEffect } from "react";
+import type { GeoCoordinates } from "./useGeolocation.ts";
+
+interface Idle {
+  status: "idle";
+}
+
+interface Pending {
+  status: "pending";
+}
+
+interface Succeeded {
+  status: "succeeded";
+  data: WeatherData;
+}
+
+interface Failed {
+  status: "failed";
+  message: string;
+}
+
+export type WeatherStatus = Idle | Pending | Succeeded | Failed;
 
 interface Current {
-    readonly temperature_2m: number;
-    readonly is_day: number;
+  readonly temperature_2m: number;
+  readonly is_day: number;
 }
 
 interface Daily {
-    readonly sunrise: string[];
-    readonly sunset: string[];
-    readonly sunshine_duration: number[];
-    readonly daylight_duration: number[];
+  readonly sunrise: string[];
+  readonly sunset: string[];
+  readonly sunshine_duration: number[];
+  readonly daylight_duration: number[];
 }
 
 interface OpenMeteoData {
-    readonly timezone: string;
-    readonly timezone_abbreviation: string;
-    readonly current: Current;
-    readonly daily: Daily;
+  readonly timezone: string;
+  readonly timezone_abbreviation: string;
+  readonly current: Current;
+  readonly daily: Daily;
 }
 
 interface WeatherData {
-    readonly timezoneLong: string;
-    readonly timezoneShort: string;
-    readonly temperature: number;
-    readonly isDay: boolean;
-    readonly sunrise: string;
-    readonly sunset: string;
-    readonly sunshineSeconds: number;
-    readonly daylightSeconds: number;
+  readonly timezoneLong: string;
+  readonly timezoneShort: string;
+  readonly temperature: number;
+  readonly isDay: boolean;
+  readonly sunrise: string;
+  readonly sunset: string;
+  readonly sunshineSeconds: number;
+  readonly daylightSeconds: number;
 }
 
 const mapData = (input: OpenMeteoData): WeatherData => ({
-    timezoneLong: input.timezone,
-    timezoneShort: input.timezone_abbreviation,
-    temperature: input.current.temperature_2m,
-    isDay: input.current.is_day === 1,
-    sunrise: input.daily.sunrise[0],
-    sunset: input.daily.sunset[0],
-    sunshineSeconds: input.daily.sunshine_duration[0],
-    daylightSeconds: input.daily.daylight_duration[0],
+  timezoneLong: input.timezone,
+  timezoneShort: input.timezone_abbreviation,
+  temperature: input.current.temperature_2m,
+  isDay: input.current.is_day === 1,
+  sunrise: input.daily.sunrise[0],
+  sunset: input.daily.sunset[0],
+  sunshineSeconds: input.daily.sunshine_duration[0],
+  daylightSeconds: input.daily.daylight_duration[0],
 });
 
-const params = new URLSearchParams({
-    latitude: String(32.71742),
-    longitude: String(-117.162772),
-    // latitude: String(-32.71742),
-    // longitude: String(62.837228),
-    current: "temperature_2m,is_day",
-    daily: "sunrise,sunset,sunshine_duration,daylight_duration",
-    temperature_unit: "fahrenheit",
-    timezone: "auto",
-    forecast_days: String(1),
-});
+export function useWeather(coordinates: GeoCoordinates | null): WeatherStatus {
+  const [status, setStatus] = useState<WeatherStatus>({ status: "idle" });
 
-const url = `https://api.open-meteo.com/v1/forecast?${params}`;
+  useEffect(() => {
+    if (!coordinates) return;
 
-export function useWeather(): { data: WeatherData | null; loading: boolean; error: string | null } {
-    const [data, setData] = useState<WeatherData | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const params = new URLSearchParams({
+      latitude: String(coordinates.latitude),
+      longitude: String(coordinates.longitude),
+      current: "temperature_2m,is_day",
+      daily: "sunrise,sunset,sunshine_duration,daylight_duration",
+      temperature_unit: "fahrenheit",
+      timezone: "auto",
+      forecast_days: "1",
+    });
 
-    useEffect(() => {
-        const fetchWeather = async () => {
-            try {
-                const response = await fetch(url);
+    const url = `https://api.open-meteo.com/v1/forecast?${params}`;
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error — status: ${response.status}`);
-                }
+    const getWeather = async () => {
+      setStatus({ status: "pending" });
 
-                const result: OpenMeteoData = await response.json();
-                const mappedData = mapData(result);
+      try {
+        const response = await fetch(url);
 
-                setData(mappedData);
+        if (!response.ok) {
+          throw new Error(`HTTP error — status: ${response.status}`);
+        }
 
-            } catch (error) {
-                if (error instanceof Error) {
-                    console.error(error.message);
-                    setError(error.message);
-                } else {
-                    console.error("An unexpected error occurred", error);
-                    setError("An unexpected error occurred");
-                }
-            } finally {
-                setLoading(false);
-            }
-        };
+        const result: OpenMeteoData = await response.json();
+        const mappedData = mapData(result);
 
-        fetchWeather();
-    }, []);
+        setStatus({
+          status: "succeeded",
+          data: mappedData,
+        });
 
-    return { data, loading, error };
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+          setStatus({ status: "failed", message: error.message });
+        } else {
+          console.error("An unexpected error occurred", error);
+          setStatus({ status: "failed", message: "An unexpected error occurred" });
+        }
+      }
+    };
+
+    getWeather();
+
+  }, [coordinates]);
+
+  return status;
 }
