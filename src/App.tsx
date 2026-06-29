@@ -1,45 +1,41 @@
-import { Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
-import { useWeather } from "./hooks/useWeather";
-import Scene from "./components/Scene";
+import { useGeolocation } from "./hooks/useGeolocation.ts";
+import { useWeather } from "./hooks/useWeather.ts";
 
 export default function App() {
-  const { data, loading, error } = useWeather();
+  const geolocation = useGeolocation();
 
-  // guard clause approach: check loading, then error, then data
+  const coordinates = geolocation.status === "succeeded" ? geolocation.data : null;
 
-  if (loading) {
-    return <p>Loading ...</p>;
+  const weather = useWeather(coordinates);
+
+  if (geolocation.status === "pending") {
+    return <p>Detecting your location ...</p>;
   }
 
-  if (error) { // if error is not null, because null is falsy
-    return <p>{error}</p>;
+  if (geolocation.status === "failed") {
+    return <p>Could not get your location: {geolocation.message}</p>;
   }
 
-  if (!data) { // narrows type from WeatherData | null to WeatherData
-    return <p>data is null</p>;
+  if (weather.status === "idle" || weather.status === "pending") {
+    return <p>Loading weather data ...</p>;
+  }
+
+  if (weather.status === "failed") {
+    return <p>Could not get weather data: {weather.message}</p>;
   }
 
   return (
     <>
-      <p>Timezone: {data.timezoneLong}</p>
-      <p>Timezone Abbreviation: {data.timezoneShort}</p>
-      <p>Temperature: {data.temperature}</p>
-      <p>Is Day: {data.isDay ? "true" : "false"}</p>
-      <p>Sunrise: {data.sunrise}</p>
-      <p>Sunset: {data.sunset}</p>
-      <p>Seconds of sunshine: {data.sunshineSeconds}</p>
-      <p>Seconds of daylight: {data.daylightSeconds}</p>
-
-      <div className="h-dvh">
-        <Canvas>
-          <Suspense fallback={null}>
-            <Scene isDay={data.isDay} />
-            <Environment preset="studio" />
-          </Suspense>
-        </Canvas>
-      </div>
+      <p>Latitude: {geolocation.data.latitude}</p>
+      <p>Longitude: {geolocation.data.longitude}</p>
+      <p>Timezone: {weather.data.timezoneLong}</p>
+      <p>Timezone Abbreviation: {weather.data.timezoneShort}</p>
+      <p>Temperature: {weather.data.temperature}</p>
+      <p>Is Day: {String(weather.data.isDay)}</p>
+      <p>Sunrise: {weather.data.sunrise}</p>
+      <p>Sunset: {weather.data.sunset}</p>
+      <p>Seconds of sunshine: {weather.data.sunshineSeconds}</p>
+      <p>Seconds of daylight: {weather.data.daylightSeconds}</p>
     </>
   );
 }
