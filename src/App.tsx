@@ -1,5 +1,5 @@
-import { useGeolocation } from "./hooks/useGeolocation.ts";
-import { useWeather } from "./hooks/useWeather.ts";
+import { useGeolocation } from "@/hooks/useGeolocation.ts";
+import { useWeather } from "@/hooks/useWeather.ts";
 
 export default function App() {
   const geolocation = useGeolocation();

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { GeoCoordinates } from "./useGeolocation.ts";
+import type { GeoCoordinates } from "@/hooks/useGeolocation.ts";
 
 interface Idle {
   status: "idle";
