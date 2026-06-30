@@ -11,7 +11,7 @@ interface Pending {
 
 interface Succeeded {
   status: "succeeded";
-  data: WeatherData;
+  data: Weather;
 }
 
 interface Failed {
@@ -21,46 +21,60 @@ interface Failed {
 
 export type WeatherStatus = Idle | Pending | Succeeded | Failed;
 
-interface Current {
-  readonly temperature_2m: number;
+interface ApiCurrent {
+  readonly apparent_temperature: number;
+  readonly weather_code: number;
   readonly is_day: number;
 }
 
-interface Daily {
+interface ApiDaily {
   readonly sunrise: string[];
   readonly sunset: string[];
-  readonly sunshine_duration: number[];
-  readonly daylight_duration: number[];
 }
 
-interface OpenMeteoData {
-  readonly timezone: string;
-  readonly timezone_abbreviation: string;
-  readonly current: Current;
-  readonly daily: Daily;
+interface ApiHourly {
+  readonly apparent_temperature: number[];
+  readonly weather_code: number[];
+  readonly time: string[];
 }
 
-interface WeatherData {
-  readonly timezoneLong: string;
-  readonly timezoneShort: string;
-  readonly temperature: number;
+interface ApiResponse {
+  readonly current: ApiCurrent;
+  readonly daily: ApiDaily;
+  readonly hourly: ApiHourly;
+}
+
+interface HourlyWeather {
+  readonly temp: number;
+  readonly code: number;
+  readonly time: Date;
+}
+
+interface Weather {
+  readonly currentTemp: number;
+  readonly currentCode: number;
   readonly isDay: boolean;
-  readonly sunrise: string;
-  readonly sunset: string;
-  readonly sunshineSeconds: number;
-  readonly daylightSeconds: number;
+  readonly sunrise: Date | undefined;
+  readonly sunset: Date | undefined;
+  readonly hourly: HourlyWeather[];
 }
 
-const mapData = (input: OpenMeteoData): WeatherData => ({
-  timezoneLong: input.timezone,
-  timezoneShort: input.timezone_abbreviation,
-  temperature: input.current.temperature_2m,
-  isDay: input.current.is_day === 1,
-  sunrise: input.daily.sunrise[0],
-  sunset: input.daily.sunset[0],
-  sunshineSeconds: input.daily.sunshine_duration[0],
-  daylightSeconds: input.daily.daylight_duration[0],
-});
+const mapData = (input: ApiResponse): Weather => {
+  const now = new Date();
+
+  return {
+    currentTemp: Math.round(input.current.apparent_temperature),
+    currentCode: input.current.weather_code,
+    isDay: input.current.is_day === 1,
+    sunrise: input.daily.sunrise.map(s => new Date(s)).find(d => d > now),
+    sunset: input.daily.sunset.map(s => new Date(s)).find(d => d > now),
+    hourly: input.hourly.apparent_temperature.map((temp, i) => ({
+      temp: Math.round(temp),
+      code: input.hourly.weather_code[i],
+      time: new Date(input.hourly.time[i]),
+    })),
+  };
+};
 
 export function useWeather(coordinates: GeoCoordinates | null): WeatherStatus {
   const [status, setStatus] = useState<WeatherStatus>({ status: "idle" });
@@ -71,11 +85,13 @@ export function useWeather(coordinates: GeoCoordinates | null): WeatherStatus {
     const params = new URLSearchParams({
       latitude: String(coordinates.latitude),
       longitude: String(coordinates.longitude),
-      current: "temperature_2m,is_day",
-      daily: "sunrise,sunset,sunshine_duration,daylight_duration",
+      current: "apparent_temperature,weather_code,is_day",
+      daily: "sunrise,sunset",
+      hourly: "apparent_temperature,weather_code",
       temperature_unit: "fahrenheit",
       timezone: "auto",
-      forecast_days: "1",
+      forecast_days: "2",
+      forecast_hours: "24",
     });
 
     const url = `https://api.open-meteo.com/v1/forecast?${params}`;
@@ -90,7 +106,8 @@ export function useWeather(coordinates: GeoCoordinates | null): WeatherStatus {
           throw new Error(`HTTP error — status: ${response.status}`);
         }
 
-        const result: OpenMeteoData = await response.json();
+        const result: ApiResponse = await response.json();
+
         const mappedData = mapData(result);
 
         setStatus({
