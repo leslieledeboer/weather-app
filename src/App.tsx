@@ -1,5 +1,6 @@
 import { useGeolocation } from "@/hooks/useGeolocation.ts";
 import { useWeather } from "@/hooks/useWeather.ts";
+import HourlyForecast from "@/components/HourlyForecast.tsx";
 
 export default function App() {
   const geolocation = useGeolocation();
@@ -43,15 +44,7 @@ export default function App() {
         {`(${geolocation.data.latitude}, ${geolocation.data.longitude})`}
       </div>
 
-      <div className="scrollbar-hidden overflow-x-auto flex gap-6 p-4 rounded bg-gray-200">
-        {weather.data.hourly.map((h, i) => (
-          <div key={i} className="aspect-square flex flex-col shrink-0 justify-center w-24 rounded bg-gray-400">
-            <p>{h.time.toLocaleTimeString("en-US", { hour: "numeric", hour12: true })}</p>
-            <p>{h.temp}</p>
-            <p>{h.code}</p>
-          </div>
-        ))}
-      </div>
+      <HourlyForecast hourly={weather.data.hourly} />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 p-4 rounded bg-gray-200">
         <div className="p-4 rounded bg-gray-400">
