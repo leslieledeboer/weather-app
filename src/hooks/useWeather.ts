@@ -44,7 +44,7 @@ interface ApiResponse {
   readonly hourly: ApiHourly;
 }
 
-interface HourlyWeather {
+export interface HourlyWeather {
   readonly temp: number;
   readonly code: number;
   readonly time: Date;
