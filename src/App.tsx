@@ -1,5 +1,6 @@
 import { useGeolocation } from "@/hooks/useGeolocation.ts";
 import { useWeather } from "@/hooks/useWeather.ts";
+import SearchBar from "@/components/SearchBar.tsx";
 import HourlyForecast from "@/components/HourlyForecast.tsx";
 
 export default function App() {
@@ -40,9 +41,7 @@ export default function App() {
         {formattedTime}
       </div>
 
-      <div className="py-1 rounded text-xl bg-gray-200">
-        {`(${geolocation.data.latitude}, ${geolocation.data.longitude})`}
-      </div>
+      <SearchBar />
 
       <HourlyForecast hourly={weather.data.hourly} />
 
