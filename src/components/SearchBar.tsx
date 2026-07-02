@@ -7,8 +7,8 @@ import type { GeocodingStatus } from "@/hooks/useGeocoding.ts";
 
 export default function SearchBar() {
   const [value, setValue] = useState<string>("");
-  const debouncedValued = useDebounce(value, 300);
-  const geocoding = useGeocoding(debouncedValued);
+  const debouncedValue = useDebounce(value, 300);
+  const geocoding = useGeocoding(debouncedValue);
 
   const renderResults = (geocoding: GeocodingStatus): ReactNode => {
     if (geocoding.status === "idle") return;
