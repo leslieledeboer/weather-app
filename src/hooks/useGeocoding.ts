@@ -58,11 +58,13 @@ export function useGeocoding(query: string): GeocodingStatus {
 
     const url = `https://geocoding-api.open-meteo.com/v1/search?${params}`;
 
+    const controller = new AbortController();
+
     const getResults = async () => {
       setStatus({ status: "pending" });
 
       try {
-        const response = await fetch(url);
+        const response = await fetch(url, { signal: controller.signal });
 
         if (!response.ok) {
           throw new Error(`HTTP error — status: ${response.status}`);
@@ -78,6 +80,8 @@ export function useGeocoding(query: string): GeocodingStatus {
         });
 
       } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+
         if (error instanceof Error) {
           console.error(error.message);
           setStatus({ status: "failed", message: error.message });
@@ -89,6 +93,8 @@ export function useGeocoding(query: string): GeocodingStatus {
     };
 
     getResults();
+
+    return () => controller.abort();
 
   }, [query]);
 
