@@ -50,7 +50,10 @@ export function useGeocoding(query: string): GeocodingStatus {
   const [status, setStatus] = useState<GeocodingStatus>({ status: "idle" });
 
   useEffect(() => {
-    if (!query) return;
+    if (!query) {
+      setStatus({ status: "idle" });
+      return;
+    }
 
     const params = new URLSearchParams({
       name: query,
