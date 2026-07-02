@@ -1,12 +1,14 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Search, Locate } from "lucide-react";
+import { useDebounce } from "@/hooks/useDebounce.ts";
 import { useGeocoding } from "@/hooks/useGeocoding.ts";
 import type { GeocodingStatus } from "@/hooks/useGeocoding.ts";
 
 export default function SearchBar() {
   const [value, setValue] = useState<string>("");
-  const geocoding = useGeocoding(value);
+  const debouncedValued = useDebounce(value, 300);
+  const geocoding = useGeocoding(debouncedValued);
 
   const renderResults = (geocoding: GeocodingStatus): ReactNode => {
     if (geocoding.status === "idle") return;
