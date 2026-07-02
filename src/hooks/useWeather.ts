@@ -106,9 +106,9 @@ export function useWeather(coordinates: GeoCoordinates | null): WeatherStatus {
           throw new Error(`HTTP error — status: ${response.status}`);
         }
 
-        const result: ApiResponse = await response.json();
+        const responseData: ApiResponse = await response.json();
 
-        const mappedData = mapData(result);
+        const mappedData = mapData(responseData);
 
         setStatus({
           status: "succeeded",
