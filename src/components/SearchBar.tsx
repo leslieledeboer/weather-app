@@ -1,8 +1,38 @@
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { Search, Locate } from "lucide-react";
+import { useGeocoding } from "@/hooks/useGeocoding.ts";
+import type { GeocodingStatus } from "@/hooks/useGeocoding.ts";
 
 export default function SearchBar() {
   const [value, setValue] = useState<string>("");
+  const geocoding = useGeocoding(value);
+
+  const renderResults = (geocoding: GeocodingStatus): ReactNode => {
+    if (geocoding.status === "idle") return;
+
+    if (geocoding.status === "pending") {
+      return <p className="mt-2 ps-9 text-left">Searching for locations ...</p>;
+    }
+
+    if (geocoding.status === "failed") {
+      return <p className="mt-2 ps-9 text-left">Could not get locations: {geocoding.message}</p>;
+    }
+
+    if (geocoding.data.length === 0) {
+      return <p className="mt-2 ps-9 text-left">No locations found.</p>;
+    }
+
+    return (
+      <ul className="mt-2 ps-9 text-left">
+        {geocoding.data.map((result) => (
+          <li key={result.id}>
+            {result.name} ({result.latitude}, {result.longitude})
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
   return (
     <div className="py-2 rounded bg-gray-200">
@@ -21,6 +51,10 @@ export default function SearchBar() {
             <button type="button" className="p-1 rounded-full hover:bg-gray-300"><Locate size={16} /></button>
           </span>
         </form>
+      </div>
+
+      <div className="max-w-sm mx-auto">
+        {renderResults(geocoding)}
       </div>
     </div>
   );
