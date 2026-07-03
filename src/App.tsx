@@ -1,12 +1,18 @@
+import { useState } from "react";
 import { useGeolocation } from "@/hooks/useGeolocation.ts";
+import type { GeoCoordinates } from "@/hooks/useGeolocation.ts";
 import { useWeather } from "@/hooks/useWeather.ts";
 import SearchBar from "@/components/SearchBar.tsx";
 import HourlyForecast from "@/components/HourlyForecast.tsx";
 
 export default function App() {
+  const [selectedLocation, setSelectedLocation] = useState<GeoCoordinates | null>(null);
+
   const geolocation = useGeolocation();
 
-  const coordinates = geolocation.status === "succeeded" ? geolocation.data : null;
+  const detectedLocation = geolocation.status === "succeeded" ? geolocation.data : null;
+
+  const coordinates = selectedLocation ?? detectedLocation;
 
   const weather = useWeather(coordinates);
 
@@ -31,6 +37,10 @@ export default function App() {
   const formattedDate = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
   const formattedTime = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "numeric", hour12: true });
 
+  const handleSelectLocation = (location: GeoCoordinates) => {
+    setSelectedLocation(location);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-4 text-center">
       <div className="py-1 rounded text-3xl bg-gray-200">
@@ -41,7 +51,7 @@ export default function App() {
         {formattedTime}
       </div>
 
-      <SearchBar />
+      <SearchBar onSelectLocation={handleSelectLocation} />
 
       <HourlyForecast hourly={weather.data.hourly} />
 

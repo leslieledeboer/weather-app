@@ -4,8 +4,13 @@ import { Search, Locate } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce.ts";
 import { useGeocoding } from "@/hooks/useGeocoding.ts";
 import type { GeocodingStatus } from "@/hooks/useGeocoding.ts";
+import type { GeoCoordinates } from "@/hooks/useGeolocation.ts";
 
-export default function SearchBar() {
+interface SearchBarProps {
+  onSelectLocation: (location: GeoCoordinates) => void;
+}
+
+export default function SearchBar({ onSelectLocation }: SearchBarProps) {
   const [value, setValue] = useState<string>("");
   const debouncedValue = useDebounce(value, 300);
   const geocoding = useGeocoding(debouncedValue);
@@ -14,22 +19,29 @@ export default function SearchBar() {
     if (geocoding.status === "idle") return;
 
     if (geocoding.status === "pending") {
-      return <p className="mt-2 ps-9 text-left">Searching for locations ...</p>;
+      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white">Searching for locations ...</p>;
     }
 
     if (geocoding.status === "failed") {
-      return <p className="mt-2 ps-9 text-left">Could not get locations: {geocoding.message}</p>;
+      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white">Could not get locations: {geocoding.message}</p>;
     }
 
     if (geocoding.data.length === 0) {
-      return <p className="mt-2 ps-9 text-left">No locations found.</p>;
+      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white">No locations found.</p>;
     }
 
     return (
-      <ul className="mt-2 ps-9 text-left">
+      <ul className="absolute z-10 w-full mt-2 ps-8 pe-8 border rounded divide-y divide-gray-400 bg-white">
         {geocoding.data.map((result) => (
           <li key={result.id}>
-            {result.name} ({result.latitude}, {result.longitude})
+            <button type="button" className="w-full p-1 text-left truncate hover:bg-gray-300" onClick={(_e) => {
+              onSelectLocation({
+                latitude: result.latitude,
+                longitude: result.longitude,
+              });
+            }}>
+              {result.name} ({result.latitude}, {result.longitude})
+            </button>
           </li>
         ))}
       </ul>
@@ -55,7 +67,7 @@ export default function SearchBar() {
         </form>
       </div>
 
-      <div className="max-w-sm mx-auto">
+      <div className="relative max-w-sm mx-auto">
         {renderResults(geocoding)}
       </div>
     </div>
