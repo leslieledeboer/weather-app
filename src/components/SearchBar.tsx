@@ -53,7 +53,13 @@ export default function SearchBar({ onSelectLocation }: SearchBarProps) {
       <div className="relative max-w-sm mx-auto">
         <form onSubmit={(e) => {
           e.preventDefault();
-          console.log(value);
+
+          if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
+            onSelectLocation({
+              latitude: geocoding.data[0].latitude,
+              longitude: geocoding.data[0].longitude,
+            });
+          }
         }}>
           <span className="absolute inset-y-0 left-0 flex items-center ps-3">
             <Search size={16} />
