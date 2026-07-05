@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { Search, Locate } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce.ts";
@@ -11,9 +11,15 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ onSelectLocation }: SearchBarProps) {
-  const [value, setValue] = useState<string>("");
-  const debouncedValue = useDebounce(value, 300);
-  const geocoding = useGeocoding(debouncedValue);
+  const [query, setQuery] = useState<string>("");
+  const debouncedQuery = useDebounce(query, 300);
+  const geocoding = useGeocoding(debouncedQuery);
+  const [activeIndex, setActiveIndex] = useState<number>(-1);
+
+  useEffect(() => {
+    setActiveIndex(-1);
+
+  }, [geocoding]);
 
   const renderResults = (geocoding: GeocodingStatus): ReactNode => {
     if (geocoding.status === "idle") return;
@@ -32,14 +38,18 @@ export default function SearchBar({ onSelectLocation }: SearchBarProps) {
 
     return (
       <ul className="absolute z-10 w-full mt-2 ps-8 pe-8 border rounded divide-y divide-gray-400 bg-white">
-        {geocoding.data.map((result) => (
+        {geocoding.data.map((result, index) => (
           <li key={result.id}>
-            <button type="button" className="w-full p-1 text-left truncate hover:bg-gray-300" onClick={(_e) => {
-              onSelectLocation({
-                latitude: result.latitude,
-                longitude: result.longitude,
-              });
-            }}>
+            <button
+              className={`${index === activeIndex ? "bg-gray-300" : "bg-white"} w-full p-1 text-left truncate`}
+              type="button"
+              onMouseEnter={(_e) => setActiveIndex(index)}
+              onClick={(_e) => {
+                onSelectLocation({
+                  latitude: result.latitude,
+                  longitude: result.longitude,
+                });
+              }}>
               {result.name} ({result.latitude}, {result.longitude})
             </button>
           </li>
@@ -55,9 +65,11 @@ export default function SearchBar({ onSelectLocation }: SearchBarProps) {
           e.preventDefault();
 
           if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
+            const selectedIndex = activeIndex === -1 ? 0 : activeIndex;
+
             onSelectLocation({
-              latitude: geocoding.data[0].latitude,
-              longitude: geocoding.data[0].longitude,
+              latitude: geocoding.data[selectedIndex].latitude,
+              longitude: geocoding.data[selectedIndex].longitude,
             });
           }
         }}>
@@ -65,10 +77,30 @@ export default function SearchBar({ onSelectLocation }: SearchBarProps) {
             <Search size={16} />
           </span>
 
-          <input onChange={(e) => setValue(e.currentTarget.value)} value={value} type="search" id="search" name="q" placeholder="Search by city or ZIP code" className="w-full py-3 ps-9 pe-9 border rounded text-sm bg-white" />
+          <input
+            id="search"
+            className="w-full py-3 ps-9 pe-9 border rounded text-sm bg-white"
+            type="search"
+            name="q"
+            value={query}
+            placeholder="Search by city or ZIP code"
+            onChange={(e) => setQuery(e.currentTarget.value)}
+            onKeyDown={(e) => {
+              if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
+                if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  setActiveIndex((prev) => (prev + 1) % geocoding.data.length);
+                } else if (e.key === "ArrowUp") {
+                  e.preventDefault();
+                  setActiveIndex((prev) => (prev - 1 + geocoding.data.length) % geocoding.data.length);
+                }
+              }
+            }} />
 
           <span className="absolute inset-y-0 right-0 flex items-center pe-3">
-            <button type="button" className="p-1 rounded-full hover:bg-gray-300"><Locate size={16} /></button>
+            <button className="p-1 rounded-full hover:bg-gray-300" type="button">
+              <Locate size={16} />
+            </button>
           </span>
         </form>
       </div>
