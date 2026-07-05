@@ -25,33 +25,34 @@ export default function SearchBar({ onSelectLocation }: SearchBarProps) {
     if (geocoding.status === "idle") return;
 
     if (geocoding.status === "pending") {
-      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white">Searching for locations ...</p>;
+      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white" role="status">Searching for locations ...</p>;
     }
 
     if (geocoding.status === "failed") {
-      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white">Could not get locations: {geocoding.message}</p>;
+      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white" role="status">Could not get locations: {geocoding.message}</p>;
     }
 
     if (geocoding.data.length === 0) {
-      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white">No locations found.</p>;
+      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white" role="status">No locations found.</p>;
     }
 
     return (
-      <ul className="absolute z-10 w-full mt-2 ps-8 pe-8 border rounded divide-y divide-gray-400 bg-white">
+      <ul id="search-results" className="absolute z-10 w-full mt-2 ps-8 pe-8 border rounded divide-y divide-gray-400 bg-white" role="listbox">
         {geocoding.data.map((result, index) => (
-          <li key={result.id}>
-            <button
-              className={`${index === activeIndex ? "bg-gray-300" : "bg-white"} w-full p-1 text-left truncate`}
-              type="button"
-              onMouseEnter={(_e) => setActiveIndex(index)}
-              onClick={(_e) => {
-                onSelectLocation({
-                  latitude: result.latitude,
-                  longitude: result.longitude,
-                });
-              }}>
-              {result.name} ({result.latitude}, {result.longitude})
-            </button>
+          <li
+            id={`option-${result.id}`}
+            key={result.id}
+            className={`${index === activeIndex ? "bg-gray-300" : "bg-white"} w-full p-1 text-left truncate cursor-pointer`}
+            role="option"
+            aria-selected={index === activeIndex}
+            onMouseEnter={(_e) => setActiveIndex(index)}
+            onClick={(_e) => {
+              onSelectLocation({
+                latitude: result.latitude,
+                longitude: result.longitude,
+              });
+            }}>
+            {result.name} ({result.latitude}, {result.longitude})
           </li>
         ))}
       </ul>
@@ -77,6 +78,8 @@ export default function SearchBar({ onSelectLocation }: SearchBarProps) {
             <Search size={16} />
           </span>
 
+          <label htmlFor="search" className="sr-only">Search by city or ZIP code</label>
+
           <input
             id="search"
             className="w-full py-3 ps-9 pe-9 border rounded text-sm bg-white"
@@ -84,6 +87,15 @@ export default function SearchBar({ onSelectLocation }: SearchBarProps) {
             name="q"
             value={query}
             placeholder="Search by city or ZIP code"
+            role="combobox"
+            aria-activedescendant={
+              geocoding.status === "succeeded" && geocoding.data.length > 0 && activeIndex !== -1
+                ? `option-${geocoding.data[activeIndex].id}`
+                : undefined
+            }
+            aria-autocomplete="list"
+            aria-controls="search-results"
+            aria-expanded={geocoding.status === "succeeded" && geocoding.data.length > 0}
             onChange={(e) => setQuery(e.currentTarget.value)}
             onKeyDown={(e) => {
               if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
