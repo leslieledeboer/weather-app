@@ -8,9 +8,10 @@ import type { GeoCoordinates } from "@/hooks/useGeolocation.ts";
 
 interface SearchBarProps {
   onSelectLocation: (location: GeoCoordinates) => void;
+  onDetectLocation: () => void;
 }
 
-export default function SearchBar({ onSelectLocation }: SearchBarProps) {
+export default function SearchBar({ onSelectLocation, onDetectLocation }: SearchBarProps) {
   const [query, setQuery] = useState<string>("");
   const debouncedQuery = useDebounce(query, 300);
   const geocoding = useGeocoding(debouncedQuery);
@@ -110,7 +111,7 @@ export default function SearchBar({ onSelectLocation }: SearchBarProps) {
             }} />
 
           <span className="absolute inset-y-0 right-0 flex items-center pe-3">
-            <button className="p-1 rounded-full hover:bg-gray-300" type="button">
+            <button className="p-1 rounded-full hover:bg-gray-300" type="button" onClick={() => onDetectLocation()}>
               <Locate size={16} />
             </button>
           </span>

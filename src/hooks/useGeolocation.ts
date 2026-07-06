@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface Pending {
   status: "pending";
@@ -21,10 +21,10 @@ export interface GeoCoordinates {
   readonly longitude: number;
 }
 
-export function useGeolocation(): GeolocationStatus {
+export function useGeolocation() {
   const [status, setStatus] = useState<GeolocationStatus>({ status: "pending" });
 
-  useEffect(() => {
+  const detectGeolocation = useCallback(() => {
     if (!navigator.geolocation) {
       setStatus({ status: "failed", message: "geolocation is not available" });
       return;
@@ -59,5 +59,10 @@ export function useGeolocation(): GeolocationStatus {
 
   }, []);
 
-  return status;
+  useEffect(() => {
+    detectGeolocation();
+
+  }, [detectGeolocation]);
+
+  return [status, detectGeolocation] as const;
 }

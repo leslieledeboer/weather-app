@@ -8,7 +8,7 @@ import HourlyForecast from "@/components/HourlyForecast.tsx";
 export default function App() {
   const [selectedLocation, setSelectedLocation] = useState<GeoCoordinates | null>(null);
 
-  const geolocation = useGeolocation();
+  const [geolocation, detectGeolocation] = useGeolocation();
 
   const detectedLocation = geolocation.status === "succeeded" ? geolocation.data : null;
 
@@ -41,6 +41,11 @@ export default function App() {
     setSelectedLocation(location);
   };
 
+  const handleDetectLocation = () => {
+    detectGeolocation();
+    setSelectedLocation(null);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-4 text-center">
       <div className="py-1 rounded text-3xl bg-gray-200">
@@ -51,7 +56,7 @@ export default function App() {
         {formattedTime}
       </div>
 
-      <SearchBar onSelectLocation={handleSelectLocation} />
+      <SearchBar onSelectLocation={handleSelectLocation} onDetectLocation={handleDetectLocation} />
 
       <HourlyForecast hourly={weather.data.hourly} />
 
