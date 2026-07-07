@@ -1,7 +1,9 @@
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { useGeolocation } from "@/hooks/useGeolocation.ts";
 import type { GeoCoordinates } from "@/hooks/useGeolocation.ts";
 import { useWeather } from "@/hooks/useWeather.ts";
+import type { Weather } from "@/hooks/useWeather.ts";
 import SearchBar from "@/components/SearchBar.tsx";
 import HourlyForecast from "@/components/HourlyForecast.tsx";
 
@@ -16,20 +18,22 @@ export default function App() {
 
   const weather = useWeather(coordinates);
 
-  if (geolocation.status === "pending") {
-    return <p>Detecting your location ...</p>;
-  }
+  let mainContent: ReactNode = null;
 
-  if (geolocation.status === "failed") {
-    return <p>Could not get your location: {geolocation.message}</p>;
-  }
-
-  if (weather.status === "idle" || weather.status === "pending") {
-    return <p>Loading weather data ...</p>;
-  }
-
-  if (weather.status === "failed") {
-    return <p>Could not get weather data: {weather.message}</p>;
+  if (!coordinates) {
+    if (geolocation.status === "pending") {
+      mainContent = <p>Detecting your location ...</p>;
+    } else if (geolocation.status === "failed") {
+      mainContent = <p>Could not get your location: {geolocation.message}</p>;
+    }
+  } else {
+    if (weather.status === "idle" || weather.status === "pending") {
+      mainContent = <p>Loading weather data ...</p>;
+    } else if (weather.status === "failed") {
+      mainContent = <p>Could not get weather data: {weather.message}</p>;
+    } else {
+      mainContent = <WeatherContent data={weather.data} />;
+    }
   }
 
   const now = new Date();
@@ -58,15 +62,23 @@ export default function App() {
 
       <SearchBar onSelectLocation={handleSelectLocation} onDetectLocation={handleDetectLocation} />
 
-      <HourlyForecast hourly={weather.data.hourly} />
+      {mainContent}
+    </div>
+  );
+}
+
+function WeatherContent({ data }: { data: Weather }) {
+  return (
+    <>
+      <HourlyForecast hourly={data.hourly} />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 p-4 rounded bg-gray-200">
         <div className="p-4 rounded bg-gray-400">
-          <p>Temperature: {weather.data.currentTemp}</p>
-          <p>Weather Code: {weather.data.currentCode}</p>
-          <p>Is Day: {String(weather.data.isDay)}</p>
-          <p>Next Sunrise: {weather.data.sunrise?.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}</p>
-          <p>Next Sunset: {weather.data.sunset?.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}</p>
+          <p>Temperature: {data.currentTemp}</p>
+          <p>Weather Code: {data.currentCode}</p>
+          <p>Is Day: {String(data.isDay)}</p>
+          <p>Next Sunrise: {data.sunrise?.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}</p>
+          <p>Next Sunset: {data.sunset?.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}</p>
         </div>
 
         <div className="p-4 rounded bg-gray-400">
@@ -77,6 +89,6 @@ export default function App() {
 
         </div>
       </div>
-    </div>
+    </>
   );
 }

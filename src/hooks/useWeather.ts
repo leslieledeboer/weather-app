@@ -50,7 +50,7 @@ export interface HourlyWeather {
   readonly time: Date;
 }
 
-interface Weather {
+export interface Weather {
   readonly currentTemp: number;
   readonly currentCode: number;
   readonly isDay: boolean;
