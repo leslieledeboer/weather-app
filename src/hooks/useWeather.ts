@@ -44,18 +44,22 @@ interface ApiResponse {
   readonly hourly: ApiHourly;
 }
 
+export interface CurrentWeather {
+  readonly temp: number;
+  readonly code: number;
+  readonly isDay: boolean;
+  readonly nextSunrise: Date | undefined;
+  readonly nextSunset: Date | undefined;
+}
+
 export interface HourlyWeather {
   readonly temp: number;
   readonly code: number;
   readonly time: Date;
 }
 
-export interface Weather {
-  readonly currentTemp: number;
-  readonly currentCode: number;
-  readonly isDay: boolean;
-  readonly sunrise: Date | undefined;
-  readonly sunset: Date | undefined;
+interface Weather {
+  readonly current: CurrentWeather;
   readonly hourly: HourlyWeather[];
 }
 
@@ -63,11 +67,13 @@ const mapData = (input: ApiResponse): Weather => {
   const now = new Date();
 
   return {
-    currentTemp: Math.round(input.current.apparent_temperature),
-    currentCode: input.current.weather_code,
-    isDay: input.current.is_day === 1,
-    sunrise: input.daily.sunrise.map(s => new Date(s)).find(d => d > now),
-    sunset: input.daily.sunset.map(s => new Date(s)).find(d => d > now),
+    current: {
+      temp: Math.round(input.current.apparent_temperature),
+      code: input.current.weather_code,
+      isDay: input.current.is_day === 1,
+      nextSunrise: input.daily.sunrise.map(s => new Date(s)).find(d => d > now),
+      nextSunset: input.daily.sunset.map(s => new Date(s)).find(d => d > now),
+    },
     hourly: input.hourly.apparent_temperature.map((temp, i) => ({
       temp: Math.round(temp),
       code: input.hourly.weather_code[i],
