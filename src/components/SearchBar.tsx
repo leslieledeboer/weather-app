@@ -52,6 +52,8 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
                 latitude: result.latitude,
                 longitude: result.longitude,
               });
+
+              setQuery("");
             }}>
             {result.name} ({result.latitude}, {result.longitude})
           </li>
@@ -73,6 +75,8 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
               latitude: geocoding.data[selectedIndex].latitude,
               longitude: geocoding.data[selectedIndex].longitude,
             });
+
+            setQuery("");
           }
         }}>
           <span className="absolute inset-y-0 left-0 flex items-center ps-3">
