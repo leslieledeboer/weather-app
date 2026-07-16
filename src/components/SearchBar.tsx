@@ -15,6 +15,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
   const [query, setQuery] = useState<string>("");
   const debouncedQuery = useDebounce(query, 300);
   const geocoding = useGeocoding(debouncedQuery);
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
 
   useEffect(() => {
@@ -54,6 +55,8 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
               });
 
               setQuery("");
+
+              setShowDropdown(false);
             }}>
             {result.name} ({result.latitude}, {result.longitude})
           </li>
@@ -77,6 +80,8 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
             });
 
             setQuery("");
+
+            setShowDropdown(false);
           }
         }}>
           <span className="absolute inset-y-0 left-0 flex items-center ps-3">
@@ -94,14 +99,18 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
             placeholder="Search by city or ZIP code"
             role="combobox"
             aria-activedescendant={
-              geocoding.status === "succeeded" && geocoding.data.length > 0 && activeIndex !== -1
+              showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0 && activeIndex !== -1
                 ? `option-${geocoding.data[activeIndex].id}`
                 : undefined
             }
             aria-autocomplete="list"
             aria-controls="search-results"
-            aria-expanded={geocoding.status === "succeeded" && geocoding.data.length > 0}
-            onChange={(e) => setQuery(e.currentTarget.value)}
+            aria-expanded={showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0}
+            onChange={(e) => {
+              setQuery(e.currentTarget.value);
+
+              setShowDropdown(true);
+            }}
             onKeyDown={(e) => {
               if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
                 if (e.key === "ArrowDown") {
@@ -123,7 +132,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
       </div>
 
       <div className="relative max-w-sm mx-auto">
-        {renderResults(geocoding)}
+        {showDropdown && renderResults(geocoding)}
       </div>
     </div>
   );
