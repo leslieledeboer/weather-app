@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { ReactNode } from "react";
 import { Search, Locate } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce.ts";
@@ -12,11 +12,31 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ onSelectLocation, onDetectLocation }: SearchBarProps) {
-  const [query, setQuery] = useState<string>("");
-  const debouncedQuery = useDebounce(query, 300);
-  const geocoding = useGeocoding(debouncedQuery);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
+  const [query, setQuery] = useState<string>("");
+
+  const debouncedQuery = useDebounce(query, 300);
+  const geocoding = useGeocoding(debouncedQuery);
+
+  useEffect(() => {
+    if (showDropdown) {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+          setShowDropdown(false);
+        }
+      };
+
+      document.addEventListener("pointerdown", handleClickOutside);
+
+      return () => {
+        document.removeEventListener("pointerdown", handleClickOutside);
+      };
+    }
+
+  }, [showDropdown]);
 
   useEffect(() => {
     setActiveIndex(-1);
@@ -55,7 +75,6 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
               });
 
               setQuery("");
-
               setShowDropdown(false);
             }}>
             {result.name} ({result.latitude}, {result.longitude})
@@ -67,72 +86,72 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
 
   return (
     <div className="py-2 rounded bg-gray-200">
-      <div className="relative max-w-sm mx-auto">
-        <form onSubmit={(e) => {
-          e.preventDefault();
+      <div ref={dropdownRef} className="max-w-sm mx-auto">
+        <div className="relative">
+          <form onSubmit={(e) => {
+            e.preventDefault();
 
-          if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
-            const selectedIndex = activeIndex === -1 ? 0 : activeIndex;
+            if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
+              const selectedIndex = activeIndex === -1 ? 0 : activeIndex;
 
-            onSelectLocation({
-              latitude: geocoding.data[selectedIndex].latitude,
-              longitude: geocoding.data[selectedIndex].longitude,
-            });
+              onSelectLocation({
+                latitude: geocoding.data[selectedIndex].latitude,
+                longitude: geocoding.data[selectedIndex].longitude,
+              });
 
-            setQuery("");
-
-            setShowDropdown(false);
-          }
-        }}>
-          <span className="absolute inset-y-0 left-0 flex items-center ps-3">
-            <Search size={16} />
-          </span>
-
-          <label htmlFor="search" className="sr-only">Search by city or ZIP code</label>
-
-          <input
-            id="search"
-            className="w-full py-3 ps-9 pe-9 border rounded text-sm bg-white"
-            type="search"
-            name="q"
-            value={query}
-            placeholder="Search by city or ZIP code"
-            role="combobox"
-            aria-activedescendant={
-              showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0 && activeIndex !== -1
-                ? `option-${geocoding.data[activeIndex].id}`
-                : undefined
+              setQuery("");
+              setShowDropdown(false);
             }
-            aria-autocomplete="list"
-            aria-controls="search-results"
-            aria-expanded={showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0}
-            onChange={(e) => {
-              setQuery(e.currentTarget.value);
+          }}>
+            <span className="absolute inset-y-0 left-0 flex items-center ps-3">
+              <Search size={16} />
+            </span>
 
-              setShowDropdown(true);
-            }}
-            onKeyDown={(e) => {
-              if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
-                if (e.key === "ArrowDown") {
-                  e.preventDefault();
-                  setActiveIndex((prev) => (prev + 1) % geocoding.data.length);
-                } else if (e.key === "ArrowUp") {
-                  e.preventDefault();
-                  setActiveIndex((prev) => (prev - 1 + geocoding.data.length) % geocoding.data.length);
-                }
+            <label htmlFor="search" className="sr-only">Search by city or ZIP code</label>
+
+            <input
+              id="search"
+              className="w-full py-3 ps-9 pe-9 border rounded text-sm bg-white"
+              type="search"
+              name="q"
+              value={query}
+              placeholder="Search by city or ZIP code"
+              role="combobox"
+              aria-activedescendant={
+                showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0 && activeIndex !== -1
+                  ? `option-${geocoding.data[activeIndex].id}`
+                  : undefined
               }
-            }} />
+              aria-autocomplete="list"
+              aria-controls="search-results"
+              aria-expanded={showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0}
+              onChange={(e) => {
+                setQuery(e.currentTarget.value);
+                setShowDropdown(true);
+              }}
+              onKeyDown={(e) => {
+                if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    setActiveIndex((prev) => (prev + 1) % geocoding.data.length);
+                  } else if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    setActiveIndex((prev) => (prev - 1 + geocoding.data.length) % geocoding.data.length);
+                  }
+                }
+              }} />
 
-          <span className="absolute inset-y-0 right-0 flex items-center pe-3">
-            <button className="p-1 rounded-full hover:bg-gray-300" type="button" onClick={() => onDetectLocation()}>
-              <Locate size={16} />
-            </button>
-          </span>
-        </form>
-      </div>
+            <span className="absolute inset-y-0 right-0 flex items-center pe-3">
+              <button className="p-1 rounded-full hover:bg-gray-300" type="button" onClick={() => onDetectLocation()}>
+                <Locate size={16} />
+              </button>
+            </span>
+          </form>
+        </div>
 
-      <div className="relative max-w-sm mx-auto">
-        {showDropdown && renderResults(geocoding)}
+        <div className="relative">
+          {showDropdown && renderResults(geocoding)}
+        </div>
       </div>
     </div>
   );
