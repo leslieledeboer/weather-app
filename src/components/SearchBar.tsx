@@ -142,7 +142,11 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
               }} />
 
             <span className="absolute inset-y-0 right-0 flex items-center pe-3">
-              <button className="p-1 rounded-full hover:bg-gray-300" type="button" onClick={() => onDetectLocation()}>
+              <button className="p-1 rounded-full hover:bg-gray-300" type="button" onClick={() => {
+                onDetectLocation();
+                setQuery("");
+                setShowDropdown(false);
+              }}>
                 <Locate size={16} />
               </button>
             </span>
