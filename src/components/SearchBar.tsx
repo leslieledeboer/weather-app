@@ -6,8 +6,13 @@ import { useGeocoding } from "@/hooks/useGeocoding.ts";
 import type { GeocodingStatus } from "@/hooks/useGeocoding.ts";
 import type { GeoCoordinates } from "@/hooks/useGeolocation.ts";
 
+export interface WeatherLocation {
+  readonly name: string;
+  readonly coords: GeoCoordinates;
+}
+
 interface SearchBarProps {
-  onSelectLocation: (location: GeoCoordinates) => void;
+  onSelectLocation: (location: WeatherLocation) => void;
   onDetectLocation: () => void;
 }
 
@@ -70,8 +75,11 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
             onMouseEnter={(_e) => setActiveIndex(index)}
             onClick={(_e) => {
               onSelectLocation({
-                latitude: result.latitude,
-                longitude: result.longitude,
+                name: result.name,
+                coords: {
+                  latitude: result.latitude,
+                  longitude: result.longitude,
+                },
               });
 
               setQuery("");
@@ -95,8 +103,11 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
               const selectedIndex = activeIndex === -1 ? 0 : activeIndex;
 
               onSelectLocation({
-                latitude: geocoding.data[selectedIndex].latitude,
-                longitude: geocoding.data[selectedIndex].longitude,
+                name: geocoding.data[selectedIndex].name,
+                coords: {
+                  latitude: geocoding.data[selectedIndex].latitude,
+                  longitude: geocoding.data[selectedIndex].longitude,
+                },
               });
 
               setQuery("");
