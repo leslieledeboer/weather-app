@@ -5,6 +5,7 @@ import type { WeatherLocation } from "@/components/SearchBar.tsx";
 import { useWeather } from "@/hooks/useWeather.ts";
 import DateTime from "@/components/DateTime.tsx";
 import SearchBar from "@/components/SearchBar.tsx";
+import LocationLabel from "@/components/LocationLabel.tsx";
 import HourlyForecast from "@/components/HourlyForecast.tsx";
 import CurrentConditions from "@/components/CurrentConditions.tsx";
 import Precipitation from "@/components/Precipitation.tsx";
@@ -37,6 +38,7 @@ export default function App() {
     } else {
       mainContent = (
         <>
+          <LocationLabel name={selectedLocation ? selectedLocation.name : "Current Location"} />
           <HourlyForecast hourly={weather.data.hourly} />
           <CurrentConditions current={weather.data.current} />
           <Precipitation />
