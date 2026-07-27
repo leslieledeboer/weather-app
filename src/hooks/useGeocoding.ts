@@ -10,7 +10,7 @@ interface Pending {
 
 interface Succeeded {
   status: "succeeded";
-  data: ApiResult[];
+  data: GeocodingResult[];
 }
 
 interface Failed {
@@ -25,25 +25,42 @@ interface ApiResult {
   readonly name: string;
   readonly latitude: number;
   readonly longitude: number;
-  readonly population: number;
   readonly feature_code: string;
+  readonly population: number;
+  readonly country?: string;
+  readonly admin1?: string;
 }
 
 interface ApiResponse {
   readonly results?: ApiResult[];
 }
 
+interface GeocodingResult {
+  readonly id: number;
+  readonly name: string;
+  readonly latitude: number;
+  readonly longitude: number;
+  readonly label: string;
+}
+
 const normalize = (s: string) => {
   return s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
 };
 
-const mapData = (input: ApiResponse, query: string): ApiResult[] => {
+const mapData = (input: ApiResponse, query: string): GeocodingResult[] => {
   if (!input.results) return [];
 
   return input.results
     .filter(r => r.feature_code.startsWith("PPL") || r.feature_code === "STLMT")
     .filter(r => normalize(r.name).startsWith(normalize(query)))
-    .sort((a, b) => b.population - a.population);
+    .sort((a, b) => b.population - a.population)
+    .map(r => ({
+      id: r.id,
+      name: r.name,
+      latitude: r.latitude,
+      longitude: r.longitude,
+      label: [r.name, r.admin1, r.country].filter(Boolean).join(", "),
+    }));
 };
 
 export function useGeocoding(query: string): GeocodingStatus {
