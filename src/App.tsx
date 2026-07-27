@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { useGeolocation } from "@/hooks/useGeolocation.ts";
-import type { GeoCoordinates } from "@/hooks/useGeolocation.ts";
+import type { WeatherLocation } from "@/components/SearchBar.tsx";
 import { useWeather } from "@/hooks/useWeather.ts";
 import DateTime from "@/components/DateTime.tsx";
 import SearchBar from "@/components/SearchBar.tsx";
@@ -11,13 +11,13 @@ import Precipitation from "@/components/Precipitation.tsx";
 import UVIndex from "@/components/UVIndex.tsx";
 
 export default function App() {
-  const [selectedLocation, setSelectedLocation] = useState<GeoCoordinates | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<WeatherLocation | null>(null);
 
   const [geolocation, detectGeolocation] = useGeolocation();
 
   const detectedLocation = geolocation.status === "succeeded" ? geolocation.data : null;
 
-  const coordinates = selectedLocation ?? detectedLocation;
+  const coordinates = selectedLocation ? selectedLocation.coords : detectedLocation;
 
   const weather = useWeather(coordinates);
 
@@ -46,7 +46,7 @@ export default function App() {
     }
   }
 
-  const handleSelectLocation = (location: GeoCoordinates) => {
+  const handleSelectLocation = (location: WeatherLocation) => {
     setSelectedLocation(location);
   };
 
