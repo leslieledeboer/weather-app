@@ -3,13 +3,10 @@ import type { ReactNode } from "react";
 import { useGeolocation } from "@/hooks/useGeolocation.ts";
 import type { WeatherLocation } from "@/components/SearchBar.tsx";
 import { useWeather } from "@/hooks/useWeather.ts";
-import DateTime from "@/components/DateTime.tsx";
 import SearchBar from "@/components/SearchBar.tsx";
 import LocationLabel from "@/components/LocationLabel.tsx";
 import HourlyForecast from "@/components/HourlyForecast.tsx";
 import CurrentConditions from "@/components/CurrentConditions.tsx";
-import Precipitation from "@/components/Precipitation.tsx";
-import UVIndex from "@/components/UVIndex.tsx";
 
 export default function App() {
   const [selectedLocation, setSelectedLocation] = useState<WeatherLocation | null>(null);
@@ -41,8 +38,6 @@ export default function App() {
           <LocationLabel name={selectedLocation ? selectedLocation.name : "Current Location"} />
           <HourlyForecast hourly={weather.data.hourly} />
           <CurrentConditions current={weather.data.current} />
-          <Precipitation />
-          <UVIndex />
         </>
       );
     }
@@ -59,8 +54,6 @@ export default function App() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-4 text-center">
-      <DateTime />
-
       <SearchBar onSelectLocation={handleSelectLocation} onDetectLocation={handleDetectLocation} />
 
       {mainContent}
