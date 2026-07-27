@@ -85,7 +85,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
               setQuery("");
               setShowDropdown(false);
             }}>
-            {result.name} ({result.latitude}, {result.longitude})
+            {result.label}
           </li>
         ))}
       </ul>
