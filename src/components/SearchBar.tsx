@@ -93,80 +93,78 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
   };
 
   return (
-    <div className="py-2 rounded bg-gray-200">
-      <div ref={dropdownRef} className="max-w-sm mx-auto">
-        <div className="relative">
-          <form onSubmit={(e) => {
-            e.preventDefault();
+    <div ref={dropdownRef} className="m-4">
+      <div className="relative">
+        <form onSubmit={(e) => {
+          e.preventDefault();
 
-            if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
-              const selectedIndex = activeIndex === -1 ? 0 : activeIndex;
+          if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
+            const selectedIndex = activeIndex === -1 ? 0 : activeIndex;
 
-              onSelectLocation({
-                name: geocoding.data[selectedIndex].name,
-                coords: {
-                  latitude: geocoding.data[selectedIndex].latitude,
-                  longitude: geocoding.data[selectedIndex].longitude,
-                },
-              });
+            onSelectLocation({
+              name: geocoding.data[selectedIndex].name,
+              coords: {
+                latitude: geocoding.data[selectedIndex].latitude,
+                longitude: geocoding.data[selectedIndex].longitude,
+              },
+            });
 
+            setQuery("");
+            setShowDropdown(false);
+          }
+        }}>
+          <span className="absolute inset-y-0 left-0 flex items-center ps-3">
+            <Search size={16} />
+          </span>
+
+          <label htmlFor="search" className="sr-only">Search by city or ZIP code</label>
+
+          <input
+            id="search"
+            className="w-full py-3 ps-9 pe-9 border rounded text-sm bg-white"
+            type="search"
+            name="q"
+            value={query}
+            placeholder="Search by city or ZIP code"
+            role="combobox"
+            aria-activedescendant={
+              showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0 && activeIndex !== -1
+                ? `option-${geocoding.data[activeIndex].id}`
+                : undefined
+            }
+            aria-autocomplete="list"
+            aria-controls="search-results"
+            aria-expanded={showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0}
+            onChange={(e) => {
+              setQuery(e.currentTarget.value);
+              setShowDropdown(true);
+            }}
+            onKeyDown={(e) => {
+              if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
+                if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  setActiveIndex((prev) => (prev + 1) % geocoding.data.length);
+                } else if (e.key === "ArrowUp") {
+                  e.preventDefault();
+                  setActiveIndex((prev) => (prev - 1 + geocoding.data.length) % geocoding.data.length);
+                }
+              }
+            }} />
+
+          <span className="absolute inset-y-0 right-0 flex items-center pe-3">
+            <button className="p-1 rounded-full hover:bg-gray-300" type="button" onClick={() => {
+              onDetectLocation();
               setQuery("");
               setShowDropdown(false);
-            }
-          }}>
-            <span className="absolute inset-y-0 left-0 flex items-center ps-3">
-              <Search size={16} />
-            </span>
+            }}>
+              <Locate size={16} />
+            </button>
+          </span>
+        </form>
+      </div>
 
-            <label htmlFor="search" className="sr-only">Search by city or ZIP code</label>
-
-            <input
-              id="search"
-              className="w-full py-3 ps-9 pe-9 border rounded text-sm bg-white"
-              type="search"
-              name="q"
-              value={query}
-              placeholder="Search by city or ZIP code"
-              role="combobox"
-              aria-activedescendant={
-                showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0 && activeIndex !== -1
-                  ? `option-${geocoding.data[activeIndex].id}`
-                  : undefined
-              }
-              aria-autocomplete="list"
-              aria-controls="search-results"
-              aria-expanded={showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0}
-              onChange={(e) => {
-                setQuery(e.currentTarget.value);
-                setShowDropdown(true);
-              }}
-              onKeyDown={(e) => {
-                if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
-                  if (e.key === "ArrowDown") {
-                    e.preventDefault();
-                    setActiveIndex((prev) => (prev + 1) % geocoding.data.length);
-                  } else if (e.key === "ArrowUp") {
-                    e.preventDefault();
-                    setActiveIndex((prev) => (prev - 1 + geocoding.data.length) % geocoding.data.length);
-                  }
-                }
-              }} />
-
-            <span className="absolute inset-y-0 right-0 flex items-center pe-3">
-              <button className="p-1 rounded-full hover:bg-gray-300" type="button" onClick={() => {
-                onDetectLocation();
-                setQuery("");
-                setShowDropdown(false);
-              }}>
-                <Locate size={16} />
-              </button>
-            </span>
-          </form>
-        </div>
-
-        <div className="relative">
-          {showDropdown && renderResults(geocoding)}
-        </div>
+      <div className="relative">
+        {showDropdown && renderResults(geocoding)}
       </div>
     </div>
   );

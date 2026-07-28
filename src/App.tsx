@@ -53,10 +53,12 @@ export default function App() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-4 text-center">
-      <SearchBar onSelectLocation={handleSelectLocation} onDetectLocation={handleDetectLocation} />
+    <div className="flex justify-center items-center min-h-dvh bg-linear-to-t from-[#48c6ef] to-[#6f86d6]">
+      <div className="flex flex-col max-w-sm mx-auto p-4">
+        <SearchBar onSelectLocation={handleSelectLocation} onDetectLocation={handleDetectLocation} />
 
-      {mainContent}
+        {mainContent}
+      </div>
     </div>
   );
 }
