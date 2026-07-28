@@ -36,8 +36,8 @@ export default function App() {
       mainContent = (
         <>
           <LocationLabel name={selectedLocation ? selectedLocation.name : "Current Location"} />
-          <HourlyForecast hourly={weather.data.hourly} />
           <CurrentConditions current={weather.data.current} />
+          <HourlyForecast hourly={weather.data.hourly} />
         </>
       );
     }
