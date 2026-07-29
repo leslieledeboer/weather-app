@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="docs/screenshot.png" alt="Weather app showing current conditions and an hourly forecast" width="800">
+</div>
+
 # Weather App
 
 A weather app that uses geolocation or city name to show current conditions and a scrollable 24-hour forecast.
