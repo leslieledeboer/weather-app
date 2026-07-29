@@ -117,7 +117,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
             <Search size={16} />
           </span>
 
-          <label htmlFor="search" className="sr-only">Search by city or ZIP code</label>
+          <label htmlFor="search" className="sr-only">Search by city</label>
 
           <input
             id="search"
@@ -125,7 +125,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
             type="search"
             name="q"
             value={query}
-            placeholder="Search by city or ZIP code"
+            placeholder="Search by city"
             role="combobox"
             aria-activedescendant={
               showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0 && activeIndex !== -1
