@@ -43,6 +43,7 @@ interface GeocodingResult {
   readonly label: string;
 }
 
+// normalize strings because startsWith is case- and accent-sensitive
 const normalize = (s: string) => {
   return s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
 };
@@ -51,15 +52,15 @@ const mapData = (input: ApiResponse, query: string): GeocodingResult[] => {
   if (!input.results) return [];
 
   return input.results
-    .filter(r => r.feature_code.startsWith("PPL") || r.feature_code === "STLMT")
-    .filter(r => normalize(r.name).startsWith(normalize(query)))
+    .filter(r => r.feature_code.startsWith("PPL") || r.feature_code === "STLMT") // only keep populated places
+    .filter(r => normalize(r.name).startsWith(normalize(query))) // only keep matches against default name (not alternate names)
     .sort((a, b) => b.population - a.population)
     .map(r => ({
       id: r.id,
       name: r.name,
       latitude: r.latitude,
       longitude: r.longitude,
-      label: [r.name, r.admin1, r.country].filter(Boolean).join(", "),
+      label: [r.name, r.admin1, r.country].filter(Boolean).join(", "), // avoid empty label segments
     }));
 };
 

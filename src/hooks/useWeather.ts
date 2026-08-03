@@ -147,7 +147,7 @@ export function useWeather(coordinates: GeoCoordinates | null): WeatherStatus {
       temperature_unit: "fahrenheit",
       wind_speed_unit: "mph",
       timezone: "auto",
-      forecast_days: "2",
+      forecast_days: "2", // second day is used to find next sunrise/sunset if today's have passed
       forecast_hours: "24",
     });
 
