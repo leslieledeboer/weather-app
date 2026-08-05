@@ -146,7 +146,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
                   setActiveIndex((prev) => (prev + 1) % geocoding.data.length);
                 } else if (e.key === "ArrowUp") {
                   e.preventDefault();
-                  setActiveIndex((prev) => (prev - 1 + geocoding.data.length) % geocoding.data.length);
+                  setActiveIndex((prev) => (prev <= 0 ? geocoding.data.length - 1 : prev - 1));
                 }
               }
             }} />
