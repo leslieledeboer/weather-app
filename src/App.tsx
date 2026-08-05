@@ -23,15 +23,15 @@ export default function App() {
 
   if (!coordinates) {
     if (geolocation.status === "pending") {
-      mainContent = <p>Detecting your location ...</p>;
+      mainContent = <p className="text-center text-balance">Detecting your location ...</p>;
     } else if (geolocation.status === "failed") {
-      mainContent = <p>{geolocation.message}</p>;
+      mainContent = <p className="text-center text-balance">{geolocation.message}</p>;
     }
   } else {
     if (weather.status === "idle" || weather.status === "pending") {
-      mainContent = <p>Loading weather data ...</p>;
+      mainContent = <p className="text-center text-balance">Loading weather data ...</p>;
     } else if (weather.status === "failed") {
-      mainContent = <p>{weather.message}</p>;
+      mainContent = <p className="text-center text-balance">{weather.message}</p>;
     } else {
       mainContent = (
         <>
