@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { getGeolocationMessage } from "@/utils/geolocationMessages.ts";
 
 interface Pending {
   status: "pending";
@@ -26,7 +27,7 @@ export function useGeolocation() {
 
   const detectGeolocation = useCallback(() => {
     if (!navigator.geolocation) {
-      setStatus({ status: "failed", message: "geolocation is not available" });
+      setStatus({ status: "failed", message: "Geolocation is not available — search for a city instead" });
       return;
     }
 
@@ -49,13 +50,11 @@ export function useGeolocation() {
         });
 
       } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-          setStatus({ status: "failed", message: error.message });
-        } else {
-          console.error("An unexpected error occurred", error);
-          setStatus({ status: "failed", message: "An unexpected error occurred" });
-        }
+        const deniedByUser = error instanceof GeolocationPositionError && error.code === GeolocationPositionError.PERMISSION_DENIED;
+
+        if (!deniedByUser) console.error(error);
+
+        setStatus({ status: "failed", message: getGeolocationMessage(error) });
       }
     };
 

@@ -103,13 +103,9 @@ export function useGeocoding(query: string): GeocodingStatus {
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") return;
 
-        if (error instanceof Error) {
-          console.error(error.message);
-          setStatus({ status: "failed", message: error.message });
-        } else {
-          console.error("An unexpected error occurred", error);
-          setStatus({ status: "failed", message: "An unexpected error occurred" });
-        }
+        console.error(error);
+
+        setStatus({ status: "failed", message: "Failed to load search results" });
       }
     };
 
