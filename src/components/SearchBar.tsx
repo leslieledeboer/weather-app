@@ -56,7 +56,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
     }
 
     if (geocoding.status === "failed") {
-      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white" role="status">Could not get locations: {geocoding.message}</p>;
+      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white" role="status">{geocoding.message}</p>;
     }
 
     if (geocoding.data.length === 0) {

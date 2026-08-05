@@ -173,13 +173,9 @@ export function useWeather(coordinates: GeoCoordinates | null): WeatherStatus {
         });
 
       } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-          setStatus({ status: "failed", message: error.message });
-        } else {
-          console.error("An unexpected error occurred", error);
-          setStatus({ status: "failed", message: "An unexpected error occurred" });
-        }
+        console.error(error);
+
+        setStatus({ status: "failed", message: "Failed to load weather data" });
       }
     };
 

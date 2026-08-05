@@ -25,13 +25,13 @@ export default function App() {
     if (geolocation.status === "pending") {
       mainContent = <p>Detecting your location ...</p>;
     } else if (geolocation.status === "failed") {
-      mainContent = <p>Could not get your location: {geolocation.message}</p>;
+      mainContent = <p>{geolocation.message}</p>;
     }
   } else {
     if (weather.status === "idle" || weather.status === "pending") {
       mainContent = <p>Loading weather data ...</p>;
     } else if (weather.status === "failed") {
-      mainContent = <p>Could not get weather data: {weather.message}</p>;
+      mainContent = <p>{weather.message}</p>;
     } else {
       mainContent = (
         <>
