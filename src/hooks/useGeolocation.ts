@@ -33,7 +33,11 @@ export function useGeolocation() {
     const getGeolocation = async () => {
       try {
         const position: GeolocationPosition = await new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject);
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            maximumAge: 300000, // 5 minutes (accepts recent cache)
+            timeout: 10000, // 10 seconds for device to respond
+            enableHighAccuracy: false, // city-level accuracy is enough
+          });
         });
 
         setStatus({
