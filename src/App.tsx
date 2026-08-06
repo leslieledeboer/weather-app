@@ -35,8 +35,11 @@ export default function App() {
     } else {
       mainContent = (
         <>
-          <LocationLabel name={selectedLocation ? selectedLocation.name : "Current Location"} />
-          <CurrentConditions current={weather.data.current} />
+          <div className="flex flex-col items-center p-4 text-center text-ink">
+            <LocationLabel name={selectedLocation ? selectedLocation.name : "Current Location"} />
+            <CurrentConditions current={weather.data.current} />
+          </div>
+
           <HourlyForecast hourly={weather.data.hourly} />
         </>
       );
@@ -53,8 +56,8 @@ export default function App() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-dvh bg-linear-to-t from-[#48c6ef] to-[#6f86d6]">
-      <div className="flex flex-col max-w-sm mx-auto p-4">
+    <div className="flex justify-center items-center min-h-dvh bg-linear-to-b from-sky-top via-sky-middle to-sky-bottom">
+      <div className="flex flex-col gap-4 max-w-sm mx-auto p-4">
         <SearchBar onSelectLocation={handleSelectLocation} onDetectLocation={handleDetectLocation} />
 
         {mainContent}

@@ -3,9 +3,9 @@ import { getCondition } from "@/utils/weatherConditions.ts";
 
 export default function CurrentConditions({ current }: { current: CurrentWeather }) {
   return (
-    <div className="mb-8 text-center text-slate-900">
-      <p className="mb-4 text-6xl">{current.temp}°F</p>
-      <p>{getCondition(current.code, current.isDay).label}</p>
-    </div>
+    <>
+      <p className="mt-3 mb-2 text-6xl font-semibold leading-none tabular-nums">{current.temp}°F</p>
+      <p className="text-xl font-medium tracking-wide">{getCondition(current.code, current.isDay).label}</p>
+    </>
   );
 }
