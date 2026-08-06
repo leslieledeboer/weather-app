@@ -20,3 +20,10 @@
         display: none;
     }
 }
+
+@theme {
+    --color-sky-top: #6f86d6;
+    --color-sky-middle: #5ca6e3;
+    --color-sky-bottom: #48c6ef;
+    --color-ink: #0d1530;
+}

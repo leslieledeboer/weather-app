@@ -52,19 +52,19 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
     if (geocoding.status === "idle") return;
 
     if (geocoding.status === "pending") {
-      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white" role="status">Searching for locations ...</p>;
+      return <p className="absolute z-10 w-full mt-2 ps-9 border border-gray-700 rounded text-left bg-white" role="status">Searching for locations ...</p>;
     }
 
     if (geocoding.status === "failed") {
-      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white" role="status">{geocoding.message}</p>;
+      return <p className="absolute z-10 w-full mt-2 ps-9 border border-gray-700 rounded text-left bg-white" role="status">{geocoding.message}</p>;
     }
 
     if (geocoding.data.length === 0) {
-      return <p className="absolute w-full mt-2 ps-9 border rounded text-left bg-white" role="status">No locations found.</p>;
+      return <p className="absolute z-10 w-full mt-2 ps-9 border border-gray-700 rounded text-left bg-white" role="status">No locations found.</p>;
     }
 
     return (
-      <ul id="search-results" className="absolute z-10 w-full mt-2 ps-8 pe-8 border rounded divide-y divide-gray-400 bg-white" role="listbox">
+      <ul id="search-results" className="absolute z-10 w-full mt-2 ps-8 pe-8 border border-gray-700 rounded divide-y divide-gray-400 bg-white" role="listbox">
         {geocoding.data.map((result, index) => (
           <li
             id={`option-${result.id}`}
@@ -93,7 +93,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
   };
 
   return (
-    <div ref={dropdownRef} className="m-4">
+    <div ref={dropdownRef}>
       <div className="relative">
         <form onSubmit={(e) => {
           e.preventDefault();
@@ -121,7 +121,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
 
           <input
             id="search"
-            className="w-full py-3 ps-9 pe-9 border rounded text-sm bg-white"
+            className="w-full py-3 ps-9 pe-9 border border-gray-700 rounded text-sm bg-white"
             type="search"
             name="q"
             value={query}
