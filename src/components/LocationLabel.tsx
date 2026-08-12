@@ -1,5 +1,5 @@
 export default function LocationLabel({ name }: { name: string }) {
   return (
-    <p className="text-xl font-medium tracking-wide">{name}</p>
+    <p className="w-full text-xl font-medium tracking-wide truncate">{name}</p>
   );
 }

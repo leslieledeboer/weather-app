@@ -28,7 +28,7 @@ export default function App() {
 
   return (
     <div className="flex justify-center items-center min-h-dvh bg-linear-to-b from-sky-top via-sky-middle to-sky-bottom">
-      <div className="flex flex-col gap-4 max-w-sm mx-auto p-4">
+      <div className="flex flex-col gap-4 w-full min-h-95 max-w-sm mx-auto p-4">
         <SearchBar onSelectLocation={handleSelectLocation} onDetectLocation={handleDetectLocation} />
 
         {coordinates ? <WeatherView weather={weather} selectedLocation={selectedLocation} /> : <LocationView geolocation={geolocation} />}
