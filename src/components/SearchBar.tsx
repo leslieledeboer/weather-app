@@ -121,7 +121,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
 
           <input
             id="search"
-            className="w-full py-3 ps-9 pe-9 border border-gray-700 rounded text-base bg-white"
+            className="w-full h-12 ps-9 pe-9 border border-gray-700 rounded text-base bg-white"
             type="search"
             name="q"
             value={query}
