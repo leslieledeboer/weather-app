@@ -43,11 +43,6 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
 
   }, [showDropdown]);
 
-  useEffect(() => {
-    setActiveIndex(-1);
-
-  }, [geocoding]);
-
   const renderResults = (geocoding: GeocodingStatus): ReactNode => {
     if (geocoding.status === "idle") return;
 
@@ -72,8 +67,8 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
             className={`${index === activeIndex ? "bg-gray-300" : "bg-white"} w-full p-1 text-left truncate cursor-pointer`}
             role="option"
             aria-selected={index === activeIndex}
-            onMouseEnter={(_e) => setActiveIndex(index)}
-            onClick={(_e) => {
+            onMouseEnter={() => setActiveIndex(index)}
+            onClick={() => {
               onSelectLocation({
                 name: result.name,
                 coords: {
@@ -138,6 +133,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
             onChange={(e) => {
               setQuery(e.currentTarget.value);
               setShowDropdown(true);
+              setActiveIndex(-1);
             }}
             onKeyDown={(e) => {
               if (geocoding.status === "succeeded" && geocoding.data.length > 0) {

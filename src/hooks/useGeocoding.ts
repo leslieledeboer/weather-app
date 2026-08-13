@@ -69,7 +69,6 @@ export function useGeocoding(query: string): GeocodingStatus {
 
   useEffect(() => {
     if (!query) {
-      setStatus({ status: "idle" });
       return;
     }
 
@@ -115,5 +114,5 @@ export function useGeocoding(query: string): GeocodingStatus {
 
   }, [query]);
 
-  return status;
+  return !query ? { status: "idle" } : status;
 }

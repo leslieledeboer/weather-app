@@ -63,6 +63,7 @@ export function useGeolocation() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the only synchronous setStatus this reaches is the no-geolocation-support failure, which is meant to fire immediately
     detectGeolocation();
 
   }, [detectGeolocation]);
