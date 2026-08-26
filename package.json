@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@meteocons/svg": "^0.1.0",
     "@tailwindcss/vite": "^4.2.2",
     "lucide-react": "^1.22.0",
     "react": "^19.2.4",
@@ -20,6 +19,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@meteocons/svg": "^0.1.0",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

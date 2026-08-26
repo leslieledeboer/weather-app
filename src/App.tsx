@@ -40,7 +40,8 @@ export default function App() {
       <div className="grow flex flex-col justify-center gap-4 w-full max-w-88 mx-auto">
         <SearchBar onSelectLocation={handleSelectLocation} onDetectLocation={handleDetectLocation} />
 
-        <div className="flex flex-col gap-4 min-h-70">
+        {/* 536px is the loaded state's height, reserved so the layout doesn't jump between states */}
+        <div className="flex flex-col gap-4 min-h-134">
           {coordinates ? <WeatherView weather={weather} selectedLocation={selectedLocation} /> : <LocationView geolocation={geolocation} />}
         </div>
       </div>
