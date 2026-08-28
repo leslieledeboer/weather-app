@@ -26,7 +26,8 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
   const debouncedQuery = useDebounce(query, 300);
   const geocoding = useGeocoding(debouncedQuery);
 
-  const hasResults = showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0;
+  const hasResults = geocoding.status === "succeeded" && geocoding.data.length > 0;
+  const showResults = showDropdown && hasResults;
 
   useEffect(() => {
     if (showDropdown) {
@@ -95,7 +96,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
         <form onSubmit={(e) => {
           e.preventDefault();
 
-          if (hasResults) {
+          if (showResults) {
             const selectedIndex = activeIndex === -1 ? 0 : activeIndex;
 
             onSelectLocation({
@@ -124,17 +125,17 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
             value={query}
             placeholder="Search by city"
             role="combobox"
-            aria-activedescendant={hasResults && activeIndex !== -1 ? `option-${geocoding.data[activeIndex].id}` : undefined}
+            aria-activedescendant={showResults && activeIndex !== -1 ? `option-${geocoding.data[activeIndex].id}` : undefined}
             aria-autocomplete="list"
-            aria-controls={hasResults ? "search-results" : undefined}
-            aria-expanded={hasResults}
+            aria-controls={showResults ? "search-results" : undefined}
+            aria-expanded={showResults}
             onChange={(e) => {
               setQuery(e.currentTarget.value);
               setShowDropdown(true);
               setActiveIndex(-1);
             }}
             onKeyDown={(e) => {
-              if (hasResults) {
+              if (showResults) {
                 if (e.key === "ArrowDown") {
                   e.preventDefault();
                   setActiveIndex((prev) => (prev + 1) % geocoding.data.length);
@@ -147,6 +148,11 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
               if (showDropdown && e.key === "Escape") {
                 e.preventDefault();
                 setShowDropdown(false);
+              }
+
+              if (!showDropdown && hasResults && e.key === "ArrowDown") {
+                e.preventDefault();
+                setShowDropdown(true);
                 setActiveIndex(-1);
               }
             }} />
