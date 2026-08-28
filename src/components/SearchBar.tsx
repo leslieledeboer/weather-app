@@ -26,6 +26,8 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
   const debouncedQuery = useDebounce(query, 300);
   const geocoding = useGeocoding(debouncedQuery);
 
+  const hasResults = showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0;
+
   useEffect(() => {
     if (showDropdown) {
       const handleClickOutside = (event: MouseEvent) => {
@@ -93,7 +95,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
         <form onSubmit={(e) => {
           e.preventDefault();
 
-          if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
+          if (hasResults) {
             const selectedIndex = activeIndex === -1 ? 0 : activeIndex;
 
             onSelectLocation({
@@ -109,7 +111,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
           }
         }}>
           <span className="absolute inset-y-0 left-0 flex items-center ps-3">
-            <Search size={16} />
+            <Search size={16} aria-hidden="true" />
           </span>
 
           <label htmlFor="search" className="sr-only">Search by city</label>
@@ -122,21 +124,17 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
             value={query}
             placeholder="Search by city"
             role="combobox"
-            aria-activedescendant={
-              showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0 && activeIndex !== -1
-                ? `option-${geocoding.data[activeIndex].id}`
-                : undefined
-            }
+            aria-activedescendant={hasResults && activeIndex !== -1 ? `option-${geocoding.data[activeIndex].id}` : undefined}
             aria-autocomplete="list"
-            aria-controls="search-results"
-            aria-expanded={showDropdown && geocoding.status === "succeeded" && geocoding.data.length > 0}
+            aria-controls={hasResults ? "search-results" : undefined}
+            aria-expanded={hasResults}
             onChange={(e) => {
               setQuery(e.currentTarget.value);
               setShowDropdown(true);
               setActiveIndex(-1);
             }}
             onKeyDown={(e) => {
-              if (geocoding.status === "succeeded" && geocoding.data.length > 0) {
+              if (hasResults) {
                 if (e.key === "ArrowDown") {
                   e.preventDefault();
                   setActiveIndex((prev) => (prev + 1) % geocoding.data.length);
@@ -145,10 +143,16 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
                   setActiveIndex((prev) => (prev <= 0 ? geocoding.data.length - 1 : prev - 1));
                 }
               }
+
+              if (showDropdown && e.key === "Escape") {
+                e.preventDefault();
+                setShowDropdown(false);
+                setActiveIndex(-1);
+              }
             }} />
 
           <span className="absolute inset-y-0 right-0 flex items-center pe-3">
-            <button className="p-1 rounded-full hover:bg-gray-300" type="button" onClick={() => {
+            <button className="p-1 rounded-full hover:bg-gray-300" type="button" aria-label="Use current location" onClick={() => {
               onDetectLocation();
               setQuery("");
               setShowDropdown(false);
