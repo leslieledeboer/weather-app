@@ -26,4 +26,8 @@
     --color-sky-middle: #75c1eb;
     --color-sky-bottom: #94d7eb;
     --color-ink: #041725;
+    --color-glass: --alpha(var(--color-white) / 30%);
+    --color-glass-hover: --alpha(var(--color-white) / 40%);
+    --color-shadow: --alpha(var(--color-black) / 20%);
+    --color-tile: --alpha(var(--color-sky-middle) / 70%);
 }

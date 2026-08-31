@@ -32,7 +32,7 @@ export default function App() {
   return (
     <div className="flex flex-col min-h-dvh px-4 bg-linear-to-b from-sky-top via-sky-middle to-sky-bottom">
       <div className="flex justify-end items-center h-36 pb-18">
-        <a className="block sm:hidden p-2 rounded-xl text-ink bg-white/30 hover:bg-white/40 backdrop-blur-md" href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="View source on GitHub">
+        <a className="block sm:hidden p-2 rounded-xl text-ink bg-glass hover:bg-glass-hover backdrop-blur-md" href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="View source on GitHub">
           <IoLogoGithub size={24} />
         </a>
       </div>
