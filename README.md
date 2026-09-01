@@ -1,6 +1,10 @@
-<div align="center">
-  <img src="docs/screenshot.png" alt="Weather app showing current conditions and an hourly forecast" width="800">
-</div>
+<table align="center" width="800">
+  <tr>
+    <td align="left"><img src="docs/screenshot-day.png" alt="Weather app with daytime color palette" width="380"></td>
+    <td width="40"></td>
+    <td align="right"><img src="docs/screenshot-night.png" alt="Weather app with nighttime color palette" width="380"></td>
+  </tr>
+</table>
 
 # Weather App
 
