@@ -12,7 +12,7 @@ export default function WeatherView({ weather, selectedLocation }: { weather: We
   } else {
     return (
       <>
-        <div className="flex flex-col items-center p-4 text-center text-ink">
+        <div className="flex flex-col items-center p-4 text-center">
           <LocationLabel name={selectedLocation ? selectedLocation.name : "Current Location"} />
           <CurrentConditions current={weather.data.current} />
         </div>

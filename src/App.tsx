@@ -9,7 +9,17 @@ import WeatherView from "@/components/WeatherView.tsx";
 
 const GITHUB_URL = "https://github.com/leslieledeboer/weather-app";
 
+type ColorPalette = "day" | "night";
+
+const getInitialPalette = (): ColorPalette => {
+  const hours = new Date().getHours();
+
+  return hours >= 6 && hours < 18 ? "day" : "night";
+};
+
 export default function App() {
+  const [colorPalette, setColorPalette] = useState<ColorPalette>(getInitialPalette);
+
   const [selectedLocation, setSelectedLocation] = useState<WeatherLocation | null>(null);
 
   const [geolocation, detectGeolocation] = useGeolocation();
@@ -29,10 +39,16 @@ export default function App() {
     setSelectedLocation(null);
   };
 
+  if (weather.status === "succeeded") {
+    const palette = weather.data.current.isDay ? "day" : "night";
+
+    if (colorPalette !== palette) setColorPalette(palette);
+  }
+
   return (
-    <div className="flex flex-col min-h-dvh px-4 bg-linear-to-b from-sky-top via-sky-middle to-sky-bottom">
+    <div className={`${colorPalette} flex flex-col min-h-dvh px-4 text-ink bg-linear-to-b from-sky-top via-sky-middle to-sky-bottom`}>
       <div className="flex justify-end items-center h-36 pb-18">
-        <a className="block sm:hidden p-2 rounded-xl text-ink bg-glass hover:bg-glass-hover backdrop-blur-md" href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="View source on GitHub">
+        <a className="block sm:hidden p-2 rounded-xl bg-glass-button hover:bg-glass-hover backdrop-blur-md" href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="View source on GitHub">
           <IoLogoGithub size={24} />
         </a>
       </div>
@@ -47,7 +63,7 @@ export default function App() {
       </div>
 
       <div className="flex justify-center items-center h-36">
-        <a className="hidden sm:block text-ink hover:underline" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
+        <a className="hidden sm:block hover:underline" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
           View source on GitHub
         </a>
       </div>

@@ -21,13 +21,35 @@
     }
 }
 
-@theme {
-    --color-sky-top: #55aaeb;
-    --color-sky-middle: #75c1eb;
-    --color-sky-bottom: #94d7eb;
-    --color-ink: #041725;
-    --color-glass: --alpha(var(--color-white) / 30%);
-    --color-glass-hover: --alpha(var(--color-white) / 40%);
-    --color-shadow: --alpha(var(--color-black) / 20%);
-    --color-tile: --alpha(var(--color-sky-middle) / 70%);
+@theme inline {
+    --color-ink: var(--ink);
+    --color-sky-top: var(--sky-top);
+    --color-sky-middle: var(--sky-middle);
+    --color-sky-bottom: var(--sky-bottom);
+    --color-glass-surface: var(--glass-surface);
+    --color-glass-edge: var(--glass-edge);
+    --color-glass-button: var(--glass-button);
+    --color-glass-hover: var(--glass-hover);
+}
+
+.day {
+    --ink: #041725;
+    --sky-top: #55aaeb;
+    --sky-middle: #75c1eb;
+    --sky-bottom: #94d7eb;
+    --glass-surface: rgb(255 255 255 / 30%);
+    --glass-edge: rgb(255 255 255 / 40%);
+    --glass-button: rgb(255 255 255 / 40%);
+    --glass-hover: rgb(255 255 255 / 50%);
+}
+
+.night {
+    --ink: #f0f2fa;
+    --sky-top: #121936;
+    --sky-middle: #192644;
+    --sky-bottom: #203251;
+    --glass-surface: rgb(255 255 255 / 10%);
+    --glass-edge: rgb(255 255 255 / 20%);
+    --glass-button: rgb(255 255 255 / 20%);
+    --glass-hover: rgb(255 255 255 / 30%);
 }

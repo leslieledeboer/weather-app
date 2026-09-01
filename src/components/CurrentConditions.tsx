@@ -7,7 +7,7 @@ export default function CurrentConditions({ current }: { current: CurrentWeather
   return (
     <>
       <div className="flex justify-center items-center size-64">
-        <ConditionIcon className="size-full text-ink" aria-hidden="true" />
+        <ConditionIcon className="size-full" aria-hidden="true" />
       </div>
 
       <p className="mt-3 mb-2 text-6xl font-semibold leading-none tabular-nums">{current.temp}°F</p>

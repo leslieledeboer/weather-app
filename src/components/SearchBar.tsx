@@ -91,7 +91,7 @@ export default function SearchBar({ onSelectLocation, onDetectLocation }: Search
   };
 
   return (
-    <div ref={dropdownRef}>
+    <div ref={dropdownRef} className="text-black">
       <div className="relative">
         <form onSubmit={(e) => {
           e.preventDefault();
