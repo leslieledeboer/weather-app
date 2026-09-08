@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { DateTime } from "luxon";
 import type { GeoCoordinates } from "@/hooks/useGeolocation.ts";
 
 interface Idle {
@@ -43,6 +44,7 @@ interface ApiHourly {
 }
 
 interface ApiResponse {
+  readonly timezone: string;
   readonly current: ApiCurrent;
   readonly daily: ApiDaily;
   readonly hourly: ApiHourly;
@@ -53,15 +55,15 @@ export interface CurrentWeather {
   readonly apparentTemp: number;
   readonly code: number;
   readonly isDay: boolean;
-  readonly nextSunrise: Date | undefined;
-  readonly nextSunset: Date | undefined;
+  readonly nextSunrise: DateTime | undefined;
+  readonly nextSunset: DateTime | undefined;
 }
 
 export interface HourlyWeather {
   readonly temp: number;
   readonly apparentTemp: number;
   readonly code: number;
-  readonly time: Date;
+  readonly time: DateTime;
 }
 
 interface Weather {
@@ -109,25 +111,26 @@ const calcApparentTemp = (temp: number, rh: number, wind: number): number => {
 };
 
 const mapData = (input: ApiResponse): Weather => {
-  const now = new Date();
-  const c = input.current;
-  const d = input.daily;
-  const h = input.hourly;
+  const timezone = input.timezone;
+  const current = input.current;
+  const daily = input.daily;
+  const hourly = input.hourly;
+  const now = DateTime.now().setZone(timezone);
 
   return {
     current: {
-      temp: Math.round(c.temperature_2m),
-      apparentTemp: Math.round(calcApparentTemp(c.temperature_2m, c.relative_humidity_2m, c.wind_speed_10m)),
-      code: c.weather_code,
-      isDay: c.is_day === 1,
-      nextSunrise: d.sunrise.map(s => new Date(s)).find(d => d > now),
-      nextSunset: d.sunset.map(s => new Date(s)).find(d => d > now),
+      temp: Math.round(current.temperature_2m),
+      apparentTemp: Math.round(calcApparentTemp(current.temperature_2m, current.relative_humidity_2m, current.wind_speed_10m)),
+      code: current.weather_code,
+      isDay: current.is_day === 1,
+      nextSunrise: daily.sunrise.map(iso => DateTime.fromISO(iso, { zone: timezone })).find(when => when > now),
+      nextSunset: daily.sunset.map(iso => DateTime.fromISO(iso, { zone: timezone })).find(when => when > now),
     },
-    hourly: h.temperature_2m.map((temp, i) => ({
+    hourly: hourly.temperature_2m.map((temp, i) => ({
       temp: Math.round(temp),
-      apparentTemp: Math.round(calcApparentTemp(temp, h.relative_humidity_2m[i], h.wind_speed_10m[i])),
-      code: h.weather_code[i],
-      time: new Date(h.time[i]),
+      apparentTemp: Math.round(calcApparentTemp(temp, hourly.relative_humidity_2m[i], hourly.wind_speed_10m[i])),
+      code: hourly.weather_code[i],
+      time: DateTime.fromISO(hourly.time[i], { zone: timezone }),
     })),
   };
 };

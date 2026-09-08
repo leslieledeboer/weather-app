@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { DateTime } from "luxon";
 import { IoLogoGithub } from "react-icons/io5";
 import { useGeolocation } from "@/hooks/useGeolocation.ts";
 import type { WeatherLocation } from "@/components/SearchBar.tsx";
@@ -12,7 +13,7 @@ const GITHUB_URL = "https://github.com/leslieledeboer/weather-app";
 type ColorPalette = "day" | "night";
 
 const getInitialPalette = (): ColorPalette => {
-  const hours = new Date().getHours();
+  const hours = DateTime.now().hour;
 
   return hours >= 6 && hours < 18 ? "day" : "night";
 };
