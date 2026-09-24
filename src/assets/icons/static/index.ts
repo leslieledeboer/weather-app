@@ -1,0 +1,16 @@
+export { default as ClearDay } from "@/assets/icons/static/clear-day.svg?react";
+export { default as ClearNight } from "@/assets/icons/static/clear-night.svg?react";
+export { default as PartlyCloudyDay } from "@/assets/icons/static/partly-cloudy-day.svg?react";
+export { default as PartlyCloudyNight } from "@/assets/icons/static/partly-cloudy-night.svg?react";
+export { default as Cloudy } from "@/assets/icons/static/cloudy.svg?react";
+export { default as Fog } from "@/assets/icons/static/fog.svg?react";
+export { default as Drizzle } from "@/assets/icons/static/drizzle.svg?react";
+export { default as Rain } from "@/assets/icons/static/rain.svg?react";
+export { default as HeavyRain } from "@/assets/icons/static/heavy-rain.svg?react";
+export { default as Sleet } from "@/assets/icons/static/sleet.svg?react";
+export { default as Snow } from "@/assets/icons/static/snow.svg?react";
+export { default as HeavySnow } from "@/assets/icons/static/heavy-snow.svg?react";
+export { default as Thunderstorm } from "@/assets/icons/static/thunderstorm.svg?react";
+export { default as NotAvailable } from "@/assets/icons/static/not-available.svg?react";
+export { default as Sunrise } from "@/assets/icons/static/sunrise.svg?react";
+export { default as Sunset } from "@/assets/icons/static/sunset.svg?react";

@@ -1,40 +1,88 @@
-import ClearDay from "@/assets/icons/clear-day.svg?react";
-import ClearNight from "@/assets/icons/clear-night.svg?react";
-import PartlyCloudyDay from "@/assets/icons/partly-cloudy-day.svg?react";
-import PartlyCloudyNight from "@/assets/icons/partly-cloudy-night.svg?react";
-import Cloudy from "@/assets/icons/cloudy.svg?react";
-import Fog from "@/assets/icons/fog.svg?react";
-import Drizzle from "@/assets/icons/drizzle.svg?react";
-import Rain from "@/assets/icons/rain.svg?react";
-import HeavyRain from "@/assets/icons/heavy-rain.svg?react";
-import Sleet from "@/assets/icons/sleet.svg?react";
-import Snow from "@/assets/icons/snow.svg?react";
-import HeavySnow from "@/assets/icons/heavy-snow.svg?react";
-import Thunderstorm from "@/assets/icons/thunderstorm.svg?react";
-import NotAvailable from "@/assets/icons/not-available.svg?react";
+import * as Animated from "@/assets/icons/animated/index.ts";
+import * as Static from "@/assets/icons/static/index.ts";
 
-export type WeatherIcon = React.FC<React.SVGProps<SVGSVGElement>>;
+type IconVariant = "animated" | "static";
+type WeatherIcon = React.FC<React.SVGProps<SVGSVGElement>>;
+type IconPair = Record<IconVariant, WeatherIcon>;
 
 interface WeatherCondition {
   label: string;
-  icon: WeatherIcon;
+  icon: IconPair;
   dayLabel?: string;
-  dayIcon?: WeatherIcon;
+  dayIcon?: IconPair;
 }
 
-const CLEAR: WeatherCondition = { label: "Clear", icon: ClearNight, dayLabel: "Sunny", dayIcon: ClearDay };
-const MOSTLY_CLEAR: WeatherCondition = { label: "Mostly Clear", icon: ClearNight, dayLabel: "Mostly Sunny", dayIcon: ClearDay };
-const PARTLY_CLOUDY: WeatherCondition = { label: "Partly Cloudy", icon: PartlyCloudyNight, dayIcon: PartlyCloudyDay };
-const CLOUDY: WeatherCondition = { label: "Cloudy", icon: Cloudy };
-const FOG: WeatherCondition = { label: "Fog", icon: Fog };
-const DRIZZLE: WeatherCondition = { label: "Drizzle", icon: Drizzle };
-const FREEZING_DRIZZLE: WeatherCondition = { label: "Freezing Drizzle", icon: Sleet };
-const RAIN: WeatherCondition = { label: "Rain", icon: Rain };
-const HEAVY_RAIN: WeatherCondition = { label: "Heavy Rain", icon: HeavyRain };
-const FREEZING_RAIN: WeatherCondition = { label: "Freezing Rain", icon: Sleet };
-const SNOW: WeatherCondition = { label: "Snow", icon: Snow };
-const HEAVY_SNOW: WeatherCondition = { label: "Heavy Snow", icon: HeavySnow };
-const THUNDERSTORM: WeatherCondition = { label: "Thunderstorm", icon: Thunderstorm };
+const NOT_AVAILABLE: IconPair = { animated: Animated.NotAvailable, static: Static.NotAvailable };
+
+const CLEAR: WeatherCondition = {
+  label: "Clear",
+  icon: { animated: Animated.ClearNight, static: Static.ClearNight },
+  dayLabel: "Sunny",
+  dayIcon: { animated: Animated.ClearDay, static: Static.ClearDay },
+};
+
+const MOSTLY_CLEAR: WeatherCondition = {
+  label: "Mostly Clear",
+  icon: { animated: Animated.ClearNight, static: Static.ClearNight },
+  dayLabel: "Mostly Sunny",
+  dayIcon: { animated: Animated.ClearDay, static: Static.ClearDay },
+};
+
+const PARTLY_CLOUDY: WeatherCondition = {
+  label: "Partly Cloudy",
+  icon: { animated: Animated.PartlyCloudyNight, static: Static.PartlyCloudyNight },
+  dayIcon: { animated: Animated.PartlyCloudyDay, static: Static.PartlyCloudyDay },
+};
+
+const CLOUDY: WeatherCondition = {
+  label: "Cloudy",
+  icon: { animated: Animated.Cloudy, static: Static.Cloudy },
+};
+
+const FOG: WeatherCondition = {
+  label: "Fog",
+  icon: { animated: Animated.Fog, static: Static.Fog },
+};
+
+const DRIZZLE: WeatherCondition = {
+  label: "Drizzle",
+  icon: { animated: Animated.Drizzle, static: Static.Drizzle },
+};
+
+const FREEZING_DRIZZLE: WeatherCondition = {
+  label: "Freezing Drizzle",
+  icon: { animated: Animated.Sleet, static: Static.Sleet },
+};
+
+const RAIN: WeatherCondition = {
+  label: "Rain",
+  icon: { animated: Animated.Rain, static: Static.Rain },
+};
+
+const HEAVY_RAIN: WeatherCondition = {
+  label: "Heavy Rain",
+  icon: { animated: Animated.HeavyRain, static: Static.HeavyRain },
+};
+
+const FREEZING_RAIN: WeatherCondition = {
+  label: "Freezing Rain",
+  icon: { animated: Animated.Sleet, static: Static.Sleet },
+};
+
+const SNOW: WeatherCondition = {
+  label: "Snow",
+  icon: { animated: Animated.Snow, static: Static.Snow },
+};
+
+const HEAVY_SNOW: WeatherCondition = {
+  label: "Heavy Snow",
+  icon: { animated: Animated.HeavySnow, static: Static.HeavySnow },
+};
+
+const THUNDERSTORM: WeatherCondition = {
+  label: "Thunderstorm",
+  icon: { animated: Animated.Thunderstorm, static: Static.Thunderstorm },
+};
 
 const CONDITIONS_BY_CODE: Record<number, WeatherCondition> = {
   0: CLEAR,
@@ -67,13 +115,13 @@ const CONDITIONS_BY_CODE: Record<number, WeatherCondition> = {
   99: THUNDERSTORM,
 };
 
-export function getCondition(code: number, isDay: boolean): { label: string, icon: WeatherIcon } {
+export function getWeatherCondition(code: number, isDay: boolean, variant: IconVariant): { label: string, icon: WeatherIcon } {
   const condition = CONDITIONS_BY_CODE[code];
 
-  if (!condition) return { label: "—", icon: NotAvailable };
+  if (!condition) return { label: "—", icon: NOT_AVAILABLE[variant] };
 
   const conditionLabel = isDay && condition.dayLabel ? condition.dayLabel : condition.label;
-  const conditionIcon = isDay && condition.dayIcon ? condition.dayIcon : condition.icon;
+  const conditionIcon = isDay && condition.dayIcon ? condition.dayIcon[variant] : condition.icon[variant];
 
   return { label: conditionLabel, icon: conditionIcon };
 }

@@ -1,8 +1,8 @@
 import type { CurrentWeather } from "@/hooks/useWeather.ts";
-import { getCondition } from "@/utils/weatherConditions.ts";
+import { getWeatherCondition } from "@/utils/weatherConditions.ts";
 
 export default function CurrentConditions({ current }: { current: CurrentWeather }) {
-  const { label: conditionLabel, icon: ConditionIcon } = getCondition(current.code, current.isDay);
+  const { label: conditionLabel, icon: ConditionIcon } = getWeatherCondition(current.code, current.isDay, "animated");
 
   return (
     <>

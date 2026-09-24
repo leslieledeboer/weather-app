@@ -21,6 +21,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.4",
     "@meteocons/svg": "^0.1.0",
+    "@meteocons/svg-static": "^0.1.0",
     "@types/luxon": "^3.7.5",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
