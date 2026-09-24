@@ -3,6 +3,7 @@ import type { WeatherLocation } from "@/components/SearchBar.tsx";
 import LocationLabel from "@/components/LocationLabel.tsx";
 import CurrentConditions from "@/components/CurrentConditions.tsx";
 import ForecastTimeline from "@/components/ForecastTimeline.tsx";
+import { buildTimelineEntries } from "@/utils/timelineEntries.ts";
 
 export default function WeatherView({ weather, selectedLocation }: { weather: WeatherStatus, selectedLocation: WeatherLocation | null }) {
   if (weather.status === "idle" || weather.status === "pending") {
@@ -17,7 +18,7 @@ export default function WeatherView({ weather, selectedLocation }: { weather: We
           <CurrentConditions current={weather.data.current} />
         </div>
 
-        <ForecastTimeline hourly={weather.data.hourly} />
+        <ForecastTimeline entries={buildTimelineEntries(weather.data.hourly, weather.data.current.nextSunrise, weather.data.current.nextSunset)} />
       </>
     );
   }
