@@ -1,6 +1,6 @@
 import type { HourlyWeather } from "@/hooks/useWeather.ts";
 
-export default function HourlyForecast({ hourly }: { hourly: HourlyWeather[] }) {
+export default function ForecastTimeline({ hourly }: { hourly: HourlyWeather[] }) {
   return (
     <div className="scrollbar-hidden overflow-x-auto flex gap-4 p-4 border border-glass-edge rounded-lg text-center bg-glass-surface backdrop-blur-xl">
       {hourly.map((h, i) => (
