@@ -40,6 +40,7 @@ interface ApiHourly {
   readonly relative_humidity_2m: number[];
   readonly wind_speed_10m: number[];
   readonly weather_code: number[];
+  readonly is_day: number[];
   readonly time: string[];
 }
 
@@ -63,6 +64,7 @@ export interface HourlyWeather {
   readonly temp: number;
   readonly apparentTemp: number;
   readonly code: number;
+  readonly isDay: boolean;
   readonly time: DateTime;
 }
 
@@ -130,6 +132,7 @@ const mapData = (input: ApiResponse): Weather => {
       temp: Math.round(temp),
       apparentTemp: Math.round(calcApparentTemp(temp, hourly.relative_humidity_2m[i], hourly.wind_speed_10m[i])),
       code: hourly.weather_code[i],
+      isDay: hourly.is_day[i] === 1,
       time: DateTime.fromISO(hourly.time[i], { zone: timezone }),
     })),
   };
@@ -146,7 +149,7 @@ export function useWeather(coordinates: GeoCoordinates | null): WeatherStatus {
       longitude: String(coordinates.longitude),
       current: "temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code,is_day",
       daily: "sunrise,sunset",
-      hourly: "temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code",
+      hourly: "temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code,is_day",
       temperature_unit: "fahrenheit",
       wind_speed_unit: "mph",
       timezone: "auto",
