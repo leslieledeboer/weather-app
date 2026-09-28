@@ -1,9 +1,9 @@
+import type { Icon, LabeledIcon } from "@/types/LabeledIcon.ts";
 import * as Animated from "@/assets/icons/animated/index.ts";
 import * as Static from "@/assets/icons/static/index.ts";
 
 type IconVariant = "animated" | "static";
-type WeatherIcon = React.FC<React.SVGProps<SVGSVGElement>>;
-type IconPair = Record<IconVariant, WeatherIcon>;
+type IconPair = Record<IconVariant, Icon>;
 
 interface WeatherCondition {
   label: string;
@@ -115,7 +115,7 @@ const CONDITIONS_BY_CODE: Record<number, WeatherCondition> = {
   99: THUNDERSTORM,
 };
 
-export function getWeatherCondition(code: number, isDay: boolean, variant: IconVariant): { label: string, icon: WeatherIcon } {
+export function getWeatherCondition(code: number, isDay: boolean, variant: IconVariant): LabeledIcon {
   const condition = CONDITIONS_BY_CODE[code];
 
   if (!condition) return { label: "—", icon: NOT_AVAILABLE[variant] };
