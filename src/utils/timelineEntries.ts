@@ -6,6 +6,8 @@ interface WeatherEntry {
   readonly type: "weather";
   readonly time: DateTime;
   readonly temp: number;
+  readonly code: number;
+  readonly isDay: boolean;
 }
 
 interface SolarEventEntry {
@@ -37,6 +39,8 @@ export function buildTimelineEntries(hourly: HourlyWeather[], nextSunrise: DateT
     type: "weather",
     time: hour.time,
     temp: hour.temp,
+    code: hour.code,
+    isDay: hour.isDay,
   }));
 
   if (nextSunrise && isValidEventTime(nextSunrise) && inHourlyRange(nextSunrise, hourly)) {
