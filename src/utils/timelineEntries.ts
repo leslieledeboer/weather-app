@@ -1,4 +1,5 @@
 import { DateTime } from "luxon";
+import type { SolarEvent } from "@/utils/solarEvents.ts";
 import type { HourlyWeather } from "@/hooks/useWeather.ts";
 
 interface WeatherEntry {
@@ -7,17 +8,12 @@ interface WeatherEntry {
   readonly temp: number;
 }
 
-interface SunriseEntry {
-  readonly type: "sunrise";
+interface SolarEventEntry {
+  readonly type: SolarEvent;
   readonly time: DateTime;
 }
 
-interface SunsetEntry {
-  readonly type: "sunset";
-  readonly time: DateTime;
-}
-
-export type TimelineEntry = WeatherEntry | SunriseEntry | SunsetEntry;
+export type TimelineEntry = WeatherEntry | SolarEventEntry;
 
 const SORT_ORDER_BY_ENTRY_TYPE: Record<TimelineEntry["type"], number> = {
   sunrise: 0,
