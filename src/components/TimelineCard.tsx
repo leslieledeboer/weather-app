@@ -1,6 +1,6 @@
 import type { TimelineEntry } from "@/utils/timelineEntries.ts";
 import { getWeatherCondition } from "@/utils/weatherConditions.ts";
-import { getSolarEvent } from "@/utils/solarEvents.ts";
+import { getSolarEventIcon } from "@/utils/solarEvents.ts";
 
 export default function TimelineCard({ entry }: { entry: TimelineEntry }) {
   if (entry.type === "weather") {
@@ -15,7 +15,7 @@ export default function TimelineCard({ entry }: { entry: TimelineEntry }) {
     );
   }
 
-  const { label: label, icon: Icon } = getSolarEvent(entry.type);
+  const { label, icon: Icon } = getSolarEventIcon(entry.type);
 
   return (
     <div className="flex flex-col shrink-0 gap-1 justify-center items-center w-20 p-2 rounded-lg bg-sky-middle/70">

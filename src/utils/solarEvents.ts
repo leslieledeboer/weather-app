@@ -6,11 +6,8 @@ export type SolarEvent = "sunrise" | "sunset";
 const SUNRISE: LabeledIcon = { label: "Sunrise", icon: Sunrise };
 const SUNSET: LabeledIcon = { label: "Sunset", icon: Sunset };
 
-const EVENTS_BY_NAME: Record<SolarEvent, LabeledIcon> = {
-  sunrise: SUNRISE,
-  sunset: SUNSET,
-};
+const SOLAR_EVENTS = { sunrise: SUNRISE, sunset: SUNSET };
 
-export function getSolarEvent(name: SolarEvent): LabeledIcon {
-  return EVENTS_BY_NAME[name];
+export function getSolarEventIcon(name: SolarEvent): LabeledIcon {
+  return SOLAR_EVENTS[name];
 }
